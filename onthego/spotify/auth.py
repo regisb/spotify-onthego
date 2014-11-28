@@ -152,7 +152,7 @@ class Client(object):
         for playlist_id, playlist_name in self.iter_playlists():
             if playlist_name == name:
                 return playlist_id
-        raise ValueError("Playlist '%s' not found" % name)
+        raise PlaylistNotFound(name)
 
     def iter_playlists(self):
         offset = 0
@@ -165,3 +165,8 @@ class Client(object):
             for playlist in playlists:
                 yield playlist["id"], playlist["name"]
 
+class PlaylistNotFound(ValueError):
+
+    def __init__(self, playlist_name):
+        super(PlaylistNotFound, self).__init__(playlist_name)
+        self.playlist_name = playlist_name

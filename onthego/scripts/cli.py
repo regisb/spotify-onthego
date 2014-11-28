@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import argparse
+import sys
 
 import onthego.download
 import onthego.spotify.auth
@@ -17,6 +18,10 @@ def download_playlist():
     args = parser.parse_args()
 
     spotify_client = onthego.spotify.auth.Client()
-    for track_name, artist in spotify_client.iter_tracks(args.playlist):
-        onthego.download.audio(track_name, artist, args.dst,
-            skip_existing=(not args.no_skip), convert_to_mp3=(not args.no_convert))
+    try:
+        for track_name, artist in spotify_client.iter_tracks(args.playlist):
+            onthego.download.audio(track_name, artist, args.dst,
+                skip_existing=(not args.no_skip), convert_to_mp3=(not args.no_convert))
+    except onthego.spotify.auth.PlaylistNotFound as e:
+        print("Playlist '%s' was not found. Did you type its name correctly?" % e.playlist_name)
+        sys.exit(1)
