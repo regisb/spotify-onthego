@@ -149,9 +149,19 @@ class Client(object):
             yield track["name"], track["artists"][0]["name"]
 
     def get_playlist_id(self, name):
-        # TODO limited to 50 playlists
-        for playlist in self.spotify.user_playlists(self.spotify_username)["items"]:
-            if playlist["name"] == name:
-                return playlist["id"]
+        for playlist_id, playlist_name in self.iter_playlists():
+            if playlist_name == name:
+                return playlist_id
         raise ValueError("Playlist '%s' not found" % name)
+
+    def iter_playlists(self):
+        offset = 0
+        limit = 50
+        while True:
+            playlists = self.spotify.user_playlists(self.spotify_username, limit=limit, offset=offset)["items"]
+            if len(playlists) == 0:
+                break
+            offset += limit
+            for playlist in playlists:
+                yield playlist["id"], playlist["name"]
 
