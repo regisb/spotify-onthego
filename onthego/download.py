@@ -10,7 +10,7 @@ def audio(track_name, artist, directory,
         skip_existing=True, convert_to_mp3=True):
 
     if should_skip(track_name, artist, directory, skip_existing, convert_to_mp3):
-        print("++ Skipping %s - %s" % (artist, directory))
+        print("++ Skipping %s - %s" % (artist, track_name))
         return
 
     print("++ Processing %s - %s" % (artist, track_name))
