@@ -7,7 +7,7 @@ import onthego.spotify.auth
 
 
 def download_playlist():
-    parser = argparse.ArgumentParser(description="Download youtube songs for a spotify playlist")
+    parser = argparse.ArgumentParser(description="Download the tracks of a Spotify playlist from YouTube")
     parser.add_argument("-S", "--no-skip", action='store_true',
             help="Don't skip files that were already downloaded.")
     parser.add_argument("-C", "--no-convert", action='store_true',

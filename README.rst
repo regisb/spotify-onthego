@@ -8,18 +8,14 @@ A utility to download Spotify playlist tracks from YouTube.
 Install requirements
 --------------------
 
-Clone the repo::
-
-    git clone https://github.com/regisb/spotify-onthego
-
 Creating a virtualenv is always a good idea::
 
     virtualenv venv
     source venv/bin/activate
 
-Install dependencies::
+Install from Github::
 
-    pip install -r requirements.txt
+    pip install git+git://github.com/myuser/foo.git
 
 If you wish to convert the downloaded files to mp3 format, you will need to
 install avconv::
