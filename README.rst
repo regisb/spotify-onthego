@@ -13,6 +13,12 @@ Creating a virtualenv is always a good idea::
     virtualenv venv
     source venv/bin/activate
 
+spotify-onthego is for Python 2 only. If Python 3 is the default on your
+platform, you should create a virtualenv using python2::
+
+    virtualenv --python python2.7 venv
+    source venv/bin/activate
+
 Install from Github::
 
     pip install git+git://github.com/regisb/spotify-onthego.git
@@ -25,6 +31,9 @@ install avconv::
 Note that you will need valid Spotify app credentials. If you don't have a
 valid client ID/secret pair of keys, you can create a Spotify app `here
 <https://developer.spotify.com/my-applications/#!/applications/create>`_.
+
+Once you have created a Spotify app, you will also have to add a redirect URI
+for this app ("Add URI").
 
 Usage
 -----
