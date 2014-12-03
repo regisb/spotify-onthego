@@ -15,7 +15,7 @@ def download_to_tmp(track_name, artist):
 
     tmp_path = get_tmp_path(best)
     print("    Downloading %s to %s" % (swf_url, tmp_path))
-    best.download(tmp_path)
+    best.download(tmp_path, quiet=True)
     return tmp_path
 
 def get_swf_url(track_name, artist):
