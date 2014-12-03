@@ -14,7 +14,7 @@ def download_to_tmp(track_name, artist):
     best = video.getbestaudio()
 
     tmp_path = get_tmp_path(best)
-    print("    Downloading {} to {}".format(swf_url, tmp_path))
+    print("    Downloading %s to %s" % (swf_url, tmp_path))
     best.download(tmp_path)
     return tmp_path
 
