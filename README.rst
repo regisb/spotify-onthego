@@ -24,9 +24,22 @@ Install from Github::
     pip install git+git://github.com/regisb/spotify-onthego.git
 
 If you wish to convert the downloaded files to mp3 format, you will need to
-install avconv::
+install avconv.
+
+For Debian/Ubuntu installation::
 
     sudo apt-get install avconv
+
+For OS X installation you will need to compile from source and you will need to
+have gcc installed::
+
+    mkdir avconv
+    cd avconv
+    wget https://libav.org/releases/libav-11.tar.xz
+    tar xjf libav-11.tar.xz
+    cd libav-11
+    ./configure --disable-yasm
+    make install
 
 Note that you will need valid Spotify app credentials. If you don't have a
 valid client ID/secret pair of keys, you can create a Spotify app `here
