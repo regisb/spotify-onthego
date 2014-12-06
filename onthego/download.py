@@ -9,6 +9,8 @@ import onthego.youtube
 def audio(track_name, artist, directory,
         skip_existing=True, convert_to_mp3=True):
 
+    artist = artist.encode("utf-8")
+    track_name = track_name.encode("utf-8")
     if should_skip(track_name, artist, directory, skip_existing, convert_to_mp3):
         print("++ Skipping %s - %s" % (artist, track_name))
         return
