@@ -142,16 +142,18 @@ class Client(object):
         self.spotify = spotipy.Spotify(auth=token)
 
     def iter_tracks(self, playlist_name):
-        playlist_id = self.get_playlist_id(playlist_name)
-        print("Downloading playlist '%s' (id=%s)" % (playlist_name, playlist_id))
-        for item in self.spotify.user_playlist(self.spotify_username, playlist_id)["tracks"]["items"]:
+        playlist_id, playlist_owner = self.get_playlist_id_info(playlist_name)
+        print("Downloading playlist '%s' (id=%s) from owner '%s'" % (
+            playlist_name, playlist_id, playlist_owner)
+        )
+        for item in self.spotify.user_playlist(playlist_owner, playlist_id)["tracks"]["items"]:
             track = item["track"]
             yield track["name"], track["artists"][0]["name"]
 
-    def get_playlist_id(self, name):
-        for playlist_id, playlist_name in self.iter_playlists():
+    def get_playlist_id_info(self, name):
+        for playlist_id, playlist_name, playlist_owner in self.iter_playlists():
             if playlist_name == name:
-                return playlist_id
+                return playlist_id, playlist_owner
         raise PlaylistNotFound(name)
 
     def iter_playlists(self):
@@ -163,7 +165,7 @@ class Client(object):
                 break
             offset += limit
             for playlist in playlists:
-                yield playlist["id"], playlist["name"]
+                yield playlist["id"], playlist["name"], playlist['owner']['id']
 
 class PlaylistNotFound(ValueError):
 
