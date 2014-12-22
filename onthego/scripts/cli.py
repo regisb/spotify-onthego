@@ -19,8 +19,8 @@ def download_playlist():
 
     spotify_client = onthego.spotify.auth.Client()
     try:
-        for track_name, artist in spotify_client.iter_tracks(args.playlist):
-            onthego.download.audio(track_name, artist, args.dst,
+        for track_name, artist in spotify_client.iter_tracks(args.playlist.decode('utf-8')):
+            onthego.download.audio(track_name, artist, args.dst.decode('utf-8'),
                 skip_existing=(not args.no_skip), convert_to_mp3=(not args.no_convert))
     except onthego.spotify.auth.PlaylistNotFound as e:
         print("Playlist '%s' was not found. Did you type its name correctly?" % e.playlist_name)
