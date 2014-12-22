@@ -14,7 +14,7 @@ def download_to_tmp(track_name, artist):
     best = video.getbestaudio()
 
     tmp_path = get_tmp_path(best)
-    print("    Downloading %s to %s" % (swf_url, tmp_path))
+    print("    Downloading %s to %s" % (swf_url, tmp_path.encode("utf-8")))
     best.download(tmp_path)
     return tmp_path
 
@@ -29,7 +29,10 @@ def get_search_query(track_name, artist):
 def get_first_search_result(search_query):
     yt_service = gdata.youtube.service.YouTubeService()
     query = gdata.youtube.service.YouTubeVideoQuery()
-    query.vq = search_query.encode("utf-8")
+    try:
+        query.vq = search_query.encode("utf-8")
+    except UnicodeDecodeError:
+        query.vq = search_query
     feed = yt_service.YouTubeQuery(query)
     # return first entry with valid swf url
     for entry in feed.entry:
