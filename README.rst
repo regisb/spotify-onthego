@@ -28,7 +28,7 @@ install avconv.
 
 For Debian/Ubuntu installation::
 
-    sudo apt-get install avconv
+    sudo apt-get install libav-tools
 
 For OS X installation you will need to compile from source and you will need to
 have gcc installed::
