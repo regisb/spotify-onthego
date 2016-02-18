@@ -59,7 +59,7 @@ class Downloader(object):
             extension = os.path.splitext(audio_file_path)[1]
             dst_path = get_audio_file_path(directory, track_name, artist, extension)
             remove_file(dst_path)
-            os.rename(audio_file_path)
+            os.rename(audio_file_path, dst_path)
 
 
     def download_to_tmp(self, track_name, artist):
@@ -82,8 +82,7 @@ class Downloader(object):
             type="video",
             part="id,snippet"
         ).execute()
-        # TODO how do we find the swf url?
-        # return first entry with valid swf url
+        # return first entry with valid video id
         for entry in feed["items"]:
             return entry["id"]["videoId"]
 
