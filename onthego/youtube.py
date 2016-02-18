@@ -54,7 +54,10 @@ class Downloader(object):
         if self.convert_to_mp3:
             dst_path = get_audio_file_path(directory, track_name, artist, ".mp3")
             remove_file(dst_path)
-            convert(audio_file_path, dst_path)
+            convert(audio_file_path, dst_path, metadata={
+                "artist": artist,
+                "title": track_name
+            })
         else:
             extension = os.path.splitext(audio_file_path)[1]
             dst_path = get_audio_file_path(directory, track_name, artist, extension)
@@ -90,8 +93,14 @@ class Downloader(object):
 def get_audio_file_path(directory, track_name, artist, extension):
     return os.path.join(directory, "%s - %s%s" % (artist, track_name, extension))
 
-def convert(src_path, dst_path):
-    subprocess.call(["avconv", "-v", "quiet", "-i", src_path, dst_path])
+def convert(src_path, dst_path, metadata=None):
+    cmd = ["avconv", "-v", "quiet", "-i", src_path]
+    if metadata:
+        for key, val in metadata.iteritems():
+            cmd += ['-metadata', '{}={}'.format(key, val.encode('utf-8'))]
+    cmd.append(dst_path)
+
+    subprocess.call(cmd)
     os.remove(src_path)
 
 def ensure_directory_exists(dirname):
