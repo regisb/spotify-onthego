@@ -34,7 +34,7 @@ setup(
         },
         entry_points={
             'console_scripts': [
-                'spotify-onthego = onthego.scripts.cli:download_playlist'
+                'spotify-playlist = onthego.scripts.cli:download_playlist'
             ]
         },
 )

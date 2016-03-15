@@ -53,7 +53,7 @@ Usage
 
 Download all songs from 'My Playlist' and save them as mp3::
 
-    spotify-onthego "My Playlist" ./music/myspotifyplaylist/
+    spotify-playlist "My Playlist" ./music/myspotifyplaylist/
 
 The Spotify authentication token and credentials will be stored in
 ~/.local/share/spotify-onthego/
