@@ -35,7 +35,7 @@ class TokenDispenser(object):
             client_id=self.spotify_client_id,
             client_secret=self.spotify_client_secret,
             redirect_uri=self.spotify_redirect_uri,
-            scope="playlist-read-private"
+            scope="playlist-read-private user-library-read"
         )
         return token
 

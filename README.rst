@@ -2,8 +2,14 @@
 Spotify On The Go
 -----------------
 
-A utility to download Spotify playlist tracks from YouTube.
+A utility to download tracks from your Spotify account. The tracks are
+downloaded from YouTube videos and converted as mp3 files.
 
+2013-03-15
+----------
+
+It is now possible to download the tracks from "Your Music > Songs"! See below
+for details.
 
 Install requirements
 --------------------
@@ -21,7 +27,7 @@ platform, you should create a virtualenv using python2::
 
 Install from Github::
 
-    pip install git+git://github.com/regisb/spotify-onthego.git
+    pip install git+https://github.com/regisb/spotify-onthego.git
 
 If you wish to convert the downloaded files to mp3 format, you will need to
 install avconv.
@@ -48,6 +54,9 @@ valid client ID/secret pair of keys, you can create a Spotify app `here
 Once you have created a Spotify app, you will also have to add a redirect URI
 for this app ("Add URI").
 
+The Spotify authentication token and credentials will be stored in
+~/.local/share/spotify-onthego/
+
 Usage
 -----
 
@@ -55,8 +64,18 @@ Download all songs from 'My Playlist' and save them as mp3::
 
     spotify-playlist "My Playlist" ./music/myspotifyplaylist/
 
-The Spotify authentication token and credentials will be stored in
-~/.local/share/spotify-onthego/
+Create a cronjob to download your Discover Weekly playlist every monday at 7am::
+
+    0 7 * * 1 /home/username/venv/bin/spotify-playlist "Discover Weekly" /home/username/music/discoverweekly
+
+Download your 30 most recent tracks from "My Music"::
+
+    spotify-mymusic -l 30 ./music/mytracks/
+
+In case of 401 error, this may be caused by a previous authorization token that
+did not have the right scope. Just remove the
+:code:`~/.local/share/spotify-onthego/spotify.token` file and start the command
+again.
 
 How to contribute
 -----------------
