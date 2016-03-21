@@ -105,7 +105,7 @@ def convert(src_path, dst_path, metadata=None):
 
 def ensure_directory_exists(dirname):
     if not os.path.exists(dirname):
-        os.mkdir(dirname)
+        os.makedirs(dirname)
 
 def remove_file(path):
     if os.path.exists(path):
