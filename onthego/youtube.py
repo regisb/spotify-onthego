@@ -8,6 +8,9 @@ import tempfile
 import apiclient.discovery
 import pafy
 
+import eyeD3
+import urllib
+import dateutil.parser
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
@@ -25,7 +28,9 @@ class Downloader(object):
         self.skip_existing = skip_existing
         self.convert_to_mp3 = convert_to_mp3
 
-    def audio(self, track_name, artist, directory):
+    def audio(self, track_name, artist, directory, album, art, year):
+        artist = filterName(artist)
+        track_name = filterName(track_name)
         if self.skip_existing and self.should_skip(track_name, artist, directory):
             print("++ Skipping %s - %s" % (artist, track_name))
             return
@@ -36,7 +41,7 @@ class Downloader(object):
             print("---- No You Tube video found for '%s - %s'" % (artist, track_name))
             return
 
-        self.convert_or_copy(audio_file_path, directory, track_name, artist)
+        self.convert_or_copy(audio_file_path, directory, track_name, artist, album, art, year)
 
     def should_skip(self, track_name, artist, directory):
         if self.convert_to_mp3 and self.audio_file_is_already_downloaded(directory, track_name, artist, ".mp3"):
@@ -49,15 +54,19 @@ class Downloader(object):
         pattern = get_audio_file_path(directory, track_name, artist, extension)
         return len(glob(pattern)) > 0
 
-    def convert_or_copy(self, audio_file_path, directory, track_name, artist):
+    def convert_or_copy(self, audio_file_path, directory, track_name, artist, album, art, year):
         ensure_directory_exists(directory)
         if self.convert_to_mp3:
             dst_path = get_audio_file_path(directory, track_name, artist, ".mp3")
             remove_file(dst_path)
+            year = str(getYear(year))
             convert(audio_file_path, dst_path, metadata={
                 "artist": artist,
-                "title": track_name
+                "title": track_name,
+                "album": album,
+                "date": year
             })
+            addAlbumArt(dst_path, art)
         else:
             extension = os.path.splitext(audio_file_path)[1]
             dst_path = get_audio_file_path(directory, track_name, artist, extension)
@@ -74,7 +83,7 @@ class Downloader(object):
         best = video.getbestaudio()
 
         tmp_path = get_tmp_path(best)
-        print("    Downloading %s to %s" % (video_url, tmp_path))
+        # print("    Downloading song from youtube")
         best.download(tmp_path, quiet=True)
         return tmp_path
 
@@ -115,3 +124,28 @@ def get_tmp_path(result_stream):
     filename = result_stream.title + "." + result_stream.extension
     filename = filename.replace('/', ' ')
     return os.path.join(tempfile.gettempdir(), filename)
+    
+def addAlbumArt(dst_path, art): 
+    tag = eyeD3.Tag()
+    tag.link(dst_path)
+    downloadFile(art, "/tmp/cover.jpg")
+    tag.addImage(0x08, "/tmp/cover.jpg")
+    tag.update()
+
+def downloadFile(source_url, dst_path):
+	filedownload = urllib.URLopener()
+	filedownload.retrieve(source_url, dst_path)
+
+def getYear(date):
+	parsedDate = dateutil.parser.parse(date)
+	year = parsedDate.year
+	return year
+	
+def filterName(name):
+	name = name.replace("[", "(")
+	name = name.replace("]", ")")
+	name = name.replace("/", "")
+	name = name.replace("\\", "")
+	# name = name.replace("&", " and ")
+	name = name.replace("@", " at ")
+	return name

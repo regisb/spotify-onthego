@@ -14,7 +14,10 @@ class Client(object):
         )
         for item in self.spotify.user_playlist(playlist_owner, playlist_id)["tracks"]["items"]:
             track = item["track"]
-            yield track["name"], track["artists"][0]["name"]
+            album = item["track"]["album"]["name"]
+            art = item["track"]["album"]["images"][0]["url"]
+            year = self.spotify.album(item["track"]["album"]["id"])["release_date"]
+            yield track["name"], track["artists"][0]["name"], album, art, year
 
     def iter_my_music(self):
         offset = 0
@@ -24,8 +27,12 @@ class Client(object):
             if len(tracks) == 0:
                 break
             offset += limit
+            
             for track in tracks:
-                yield track["track"]["name"], track["track"]["artists"][0]["name"]
+                album = track["track"]["album"]["name"]
+                art = track["track"]["album"]["images"][0]["url"]
+                year = self.spotify.album(track["track"]["album"]["id"])["release_date"]
+                yield track["track"]["name"], track["track"]["artists"][0]["name"], album, art, year
 
     def get_playlist_info(self, name):
         """Get playlist ID and owner

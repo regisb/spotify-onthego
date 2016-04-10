@@ -18,8 +18,8 @@ def download_playlist():
     spotify_client, youtube_downloader = get_clients(args)
 
     try:
-        for track_name, artist in spotify_client.iter_playlist_tracks(args.playlist.decode('utf-8')):
-            youtube_downloader.audio(track_name, artist, args.dst.decode('utf-8'))
+        for track_name, artist, album, art, year in spotify_client.iter_playlist_tracks(args.playlist.decode('utf-8')):
+            youtube_downloader.audio(track_name, artist, args.dst.decode('utf-8'), album, art, year)
     except onthego.spotify.PlaylistNotFound as e:
         print("Playlist '%s' was not found. Did you type its name correctly?" % e.playlist_name)
         sys.exit(1)
@@ -32,10 +32,10 @@ def download_my_music():
 
     spotify_client, youtube_downloader = get_clients(args)
     track_count = 0
-    for track_name, artist in spotify_client.iter_my_music():
+    for track_name, artist, album, art, year in spotify_client.iter_my_music():
         if args.limit is not None and track_count >= args.limit:
             break
-        youtube_downloader.audio(track_name, artist, args.dst.decode('utf-8'))
+        youtube_downloader.audio(track_name, artist, args.dst.decode('utf-8'), album, art, year)
         track_count += 1
 
 def add_common_options_to_parser(parser):
