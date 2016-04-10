@@ -12,7 +12,7 @@ def get_requirements():
 
 setup(
         name='spotify-onthego',
-        version='0.0.1',
+        version='0.0.2',
         description="Download Spotify playlists via YouTube",
         long_description=get_long_description(),
         classifiers=[
@@ -21,9 +21,9 @@ setup(
             "Topic :: Multimedia :: Sound/Audio :: Capture/Recording",
         ],
         keywords='',
-        author=u"Régis Behmo",
-        author_email='regis@behmo.com',
-        url='https://github.com/regisb/spotify-onthego',
+        author=u"xabixab",
+        author_email='xabier@xabixab.com',
+        url='https://github.com/xabixab/spotify-onthego',
         license='GPL',
         packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
         include_package_data=True,
