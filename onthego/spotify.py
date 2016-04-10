@@ -14,9 +14,9 @@ class Client(object):
         )
         for item in self.spotify.user_playlist(playlist_owner, playlist_id)["tracks"]["items"]:
             track = item["track"]
-            album = track["track"]["album"]["name"]
-            art = track["track"]["album"]["images"][0]["url"]
-            year = track["added_at"]
+            album = item["track"]["album"]["name"]
+            art = item["track"]["album"]["images"][0]["url"]
+            year = self.spotify.album(item["track"]["album"]["id"])["release_date"]
             yield track["name"], track["artists"][0]["name"], album, art, year
 
     def iter_my_music(self):
