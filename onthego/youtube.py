@@ -60,7 +60,6 @@ class Downloader(object):
             remove_file(dst_path)
             shutil.move(audio_file_path, dst_path)
 
-
     def download_to_tmp(self, track):
         video_id = self.get_video_id(track)
         if video_id is None:
@@ -93,7 +92,11 @@ def convert(src_path, dst_path):
     """
     Convert a file to mp3 and remove the original file.
     """
-    subprocess.call(["avconv", "-v", "quiet", "-i", src_path, dst_path])
+    try:
+        subprocess.call(["avconv", "-v", "quiet", "-i", src_path, dst_path])
+    except KeyboardInterrupt:
+        os.remove(dst_path)
+        raise
     os.remove(src_path)
 
 def ensure_directory_exists(dirname):
