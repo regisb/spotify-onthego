@@ -86,7 +86,8 @@ class Downloader(object):
 
 
 def get_audio_file_path(directory, track, extension):
-    return os.path.join(directory, "%s - %s%s" % (track.artist, track.name, extension))
+    filename = "%s - %s%s" % (track.artist, track.name, extension)
+    return os.path.join(directory, filter_filename(filename))
 
 def convert(src_path, dst_path):
     """
@@ -109,5 +110,8 @@ def remove_file(path):
 
 def get_tmp_path(result_stream):
     filename = result_stream.title + "." + result_stream.extension
-    filename = filename.replace('/', ' ').replace('\\', ' ')
+    filename = filter_filename(filename)
     return os.path.join(tempfile.gettempdir(), filename)
+
+def filter_filename(filename):
+    return filename.replace('/', ' ').replace('\\', ' ')
