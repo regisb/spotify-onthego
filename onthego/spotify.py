@@ -13,11 +13,7 @@ class Client(object):
             playlist_name, playlist_id, playlist_owner)
         )
         for item in self.spotify.user_playlist(playlist_owner, playlist_id)["tracks"]["items"]:
-            track = item["track"]
-            album = item["track"]["album"]["name"]
-            art = item["track"]["album"]["images"][0]["url"]
-            year = self.spotify.album(item["track"]["album"]["id"])["release_date"]
-            yield track["name"], track["artists"][0]["name"], album, art, year
+            yield self.api_result_to_track(item["track"])
 
     def iter_my_music(self):
         offset = 0
@@ -27,12 +23,18 @@ class Client(object):
             if len(tracks) == 0:
                 break
             offset += limit
-            
-            for track in tracks:
-                album = track["track"]["album"]["name"]
-                art = track["track"]["album"]["images"][0]["url"]
-                year = self.spotify.album(track["track"]["album"]["id"])["release_date"]
-                yield track["track"]["name"], track["track"]["artists"][0]["name"], album, art, year
+
+            for item in tracks:
+                yield self.api_result_to_track(item["track"])
+
+    def api_result_to_track(self, api_track_result):
+        """Convert a 'track' api object to Track
+
+        Album information is fetched and added to the Track object.
+        """
+        # fetch album info
+        album = self.spotify.album(api_track_result["album"]["id"])
+        return Track(api_track_result["name"], api_track_result["artists"], album)
 
     def get_playlist_info(self, name):
         """Get playlist ID and owner
@@ -66,6 +68,34 @@ class Client(object):
             offset += limit
             for playlist in playlists:
                 yield playlist["id"], playlist["name"], playlist['owner']['id']
+
+
+class Track(object):
+
+    def __init__(self, name, artists, album):
+        self.name = name
+        self.album = album
+        self.artists = artists
+
+    @property
+    def artist(self):
+        return self.artists[0]["name"]
+
+    @property
+    def album_name(self):
+        return self.album["name"]
+
+    @property
+    def album_art_url(self):
+        return self.album["images"][0]["url"]
+
+    @property
+    def album_release_date(self):
+        """Note that release dates are encoded in Spotify as '%Y-%m-%d',
+        '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
+        4 characters should suffice.
+        """
+        return self.album['release_date']
 
 
 class PlaylistNotFound(ValueError):
