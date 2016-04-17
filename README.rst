@@ -5,10 +5,11 @@ Spotify On The Go
 A utility to download tracks from your Spotify account. The tracks are
 downloaded from YouTube videos and converted as mp3 files.
 
-2016-03-15
+Changelog
 ----------
 
-It is now possible to download the tracks from "Your Music > Songs"! See below
+- 2016-04-17 - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
+- 2016-03-15 - It is now possible to download the tracks from "Your Music > Songs"! See below
 for details.
 
 Install requirements
