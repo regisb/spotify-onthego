@@ -2,10 +2,11 @@ from __future__ import print_function
 
 from glob import glob
 import os
+import shutil
 import subprocess
 import tempfile
 
-import apiclient.discovery
+from apiclient import discovery
 import pafy
 
 from . import id3
@@ -18,7 +19,7 @@ class Downloader(object):
 
     def __init__(self, google_developer_key, directory, skip_existing=True, convert_to_mp3=True):
 
-        self.client = apiclient.discovery.build(
+        self.client = discovery.build(
             YOUTUBE_API_SERVICE_NAME,
             YOUTUBE_API_VERSION,
             developerKey=google_developer_key
@@ -42,15 +43,9 @@ class Downloader(object):
         self.convert_or_copy(audio_file_path, track)
 
     def should_skip(self, track):
-        if self.convert_to_mp3 and self.audio_file_is_already_downloaded(track, ".mp3"):
-            return True
-        elif not self.convert_to_mp3 and self.audio_file_is_already_downloaded(track, ".*"):
-            return True
-        return False
-
-    def audio_file_is_already_downloaded(self, track, extension):
-        pattern = get_audio_file_path(self.directory, track, extension)
-        return len(glob(pattern)) > 0
+        glob_extension = ".mp3" if self.convert_to_mp3 else ".*"
+        pattern = get_audio_file_path(self.directory, track, glob_extension)
+        return len(glob(pattern)) != 0
 
     def convert_or_copy(self, audio_file_path, track):
         ensure_directory_exists(self.directory)
@@ -63,7 +58,7 @@ class Downloader(object):
             extension = os.path.splitext(audio_file_path)[1]
             dst_path = get_audio_file_path(self.directory, track, extension)
             remove_file(dst_path)
-            os.rename(audio_file_path, dst_path)
+            shutil.move(audio_file_path, dst_path)
 
 
     def download_to_tmp(self, track):
