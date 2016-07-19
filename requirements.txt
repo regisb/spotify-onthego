@@ -1,5 +1,5 @@
 oauth2client==2.0.1
 google-api-python-client==1.5.0
 spotipy==2.3.7
-pafy==0.4.3
+pafy
 eyeD3==0.7.9
