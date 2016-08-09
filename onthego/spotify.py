@@ -1,18 +1,16 @@
 import spotipy
 
+from . import auth
 
 class Client(object):
 
-    def __init__(self, username, token):
-        self.spotify_username = username
-        self.spotify = spotipy.Spotify(auth=token)
+    def __init__(self):
+        token_dispenser = auth.TokenDispenser()
+        self.spotify_username = token_dispenser.spotify_username
+        self.spotify = spotipy.Spotify(auth=token_dispenser.spotify_token)
 
-    def iter_playlist_tracks(self, playlist_name):
-        playlist_id, playlist_owner = self.get_playlist_info(playlist_name)
-        print("Downloading playlist '%s' (id=%s) from owner '%s'" % (
-            playlist_name, playlist_id, playlist_owner)
-        )
-        for item in self.spotify.user_playlist(playlist_owner, playlist_id)["tracks"]["items"]:
+    def iter_playlist_tracks(self, playlist_id, playlist_owner_id):
+        for item in self.spotify.user_playlist(playlist_owner_id, playlist_id)["tracks"]["items"]:
             yield self.api_result_to_track(item["track"])
 
     def iter_my_music(self):
@@ -35,21 +33,6 @@ class Client(object):
         # fetch album info
         album = self.spotify.album(api_track_result["album"]["id"])
         return Track(api_track_result["name"], api_track_result["artists"], album)
-
-    def get_playlist_info(self, name):
-        """Get playlist ID and owner
-
-        Args:
-            name (str)
-
-        Returns:
-            playlist_id (str)
-            playlist_owner (str)
-        """
-        for playlist_id, playlist_name, playlist_owner_id in self.iter_playlists():
-            if playlist_name == name:
-                return playlist_id, playlist_owner_id
-        raise PlaylistNotFound(name)
 
     def iter_playlists(self):
         """Iterate on all user playlists
@@ -96,10 +79,3 @@ class Track(object):
         4 characters should suffice.
         """
         return self.album['release_date']
-
-
-class PlaylistNotFound(ValueError):
-
-    def __init__(self, playlist_name):
-        super(PlaylistNotFound, self).__init__(playlist_name)
-        self.playlist_name = playlist_name

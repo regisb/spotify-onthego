@@ -8,9 +8,9 @@ downloaded from YouTube videos and converted as mp3 files.
 Changelog
 ----------
 
+- 2016-07-09 - Add playlist name wildcard matching
 - 2016-04-17 - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
-- 2016-03-15 - It is now possible to download the tracks from "Your Music > Songs"! See below
-for details.
+- 2016-03-15 - It is now possible to download the tracks from "Your Music > Songs"! See below for details.
 
 Install requirements
 --------------------
@@ -72,6 +72,10 @@ Create a cronjob to download your Discover Weekly playlist every monday at 7am::
 Download your 30 most recent tracks from "My Music"::
 
     spotify-mymusic -l 30 ./music/mytracks/
+
+Wildcards are supported, too::
+
+    spotify-playlist "Mixtape*" ./music/
 
 In case of 401 error, this may be caused by a previous authorization token that
 did not have the right scope. Just remove the

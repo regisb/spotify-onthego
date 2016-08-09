@@ -2,6 +2,8 @@
 from __future__ import print_function
 
 import argparse
+from fnmatch import fnmatch
+import os
 import sys
 
 import onthego.auth
@@ -15,13 +17,31 @@ def download_playlist():
     add_common_options_to_parser(parser)
     args = parser.parse_args()
 
-    spotify_client, youtube_downloader = get_clients(args)
+    spotify_client = onthego.spotify.Client()
 
-    try:
-        for track in spotify_client.iter_playlist_tracks(args.playlist.decode('utf-8')):
-            youtube_downloader.audio(track)
-    except onthego.spotify.PlaylistNotFound as e:
-        print("Playlist '%s' was not found. Did you type its name correctly?" % e.playlist_name)
+    playlist_found = False
+    for playlist_id, playlist_name, playlist_owner_id in spotify_client.iter_playlists():
+        dst = None
+        if playlist_name == args.playlist:
+            # Exact match: don't create subdirectory
+            dst = args.dst
+        elif fnmatch(playlist_name, args.playlist):
+            # Wildcard match: save in subdirectory
+            dst = os.path.join(args.dst, playlist_name)
+        if dst is not None:
+            playlist_found = True
+            print("Downloading playlist '%s' (id=%s) from owner '%s'" % (
+                playlist_name, playlist_id, playlist_owner_id)
+            )
+            youtube_downloader = onthego.youtube.Downloader(
+                dst.decode('utf-8'),
+                skip_existing=not args.no_skip,
+                convert_to_mp3=not args.no_convert
+            )
+            for track in spotify_client.iter_playlist_tracks(playlist_id, playlist_owner_id):
+                youtube_downloader.audio(track)
+    if not playlist_found:
+        print("Playlist '%s' was not found. Did you type its name correctly?" % args.playlist)
         sys.exit(1)
 
 def download_my_music():
@@ -30,7 +50,12 @@ def download_my_music():
     add_common_options_to_parser(parser)
     args = parser.parse_args()
 
-    spotify_client, youtube_downloader = get_clients(args)
+    spotify_client = onthego.spotify.Client()
+    youtube_downloader = onthego.youtube.Downloader(
+        args.dst.decode('utf-8'),
+        skip_existing=not args.no_skip,
+        convert_to_mp3=not args.no_convert
+    )
 
     track_count = 0
     for track in spotify_client.iter_my_music():
@@ -45,16 +70,3 @@ def add_common_options_to_parser(parser):
     parser.add_argument("-C", "--no-convert", action='store_true',
             help="Don't convert audio files to mp3 format.")
     parser.add_argument("dst", help="Destination directory")
-
-def get_clients(args):
-    token_dispenser = onthego.auth.TokenDispenser()
-    spotify_client = onthego.spotify.Client(token_dispenser.spotify_username,
-                                            token_dispenser.spotify_token)
-    youtube_downloader = onthego.youtube.Downloader(
-        token_dispenser.google_developer_key,
-        args.dst.decode('utf-8'),
-        skip_existing=(not args.no_skip),
-        convert_to_mp3=(not args.no_convert)
-    )
-    return spotify_client, youtube_downloader
-

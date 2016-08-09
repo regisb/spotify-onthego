@@ -9,6 +9,7 @@ import tempfile
 from apiclient import discovery
 import pafy
 
+from . import auth
 from . import id3
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
@@ -17,14 +18,15 @@ YOUTUBE_API_VERSION = "v3"
 
 class Downloader(object):
 
-    def __init__(self, google_developer_key, directory, skip_existing=True, convert_to_mp3=True):
+    def __init__(self, directory, skip_existing=True, convert_to_mp3=True):
+
+        token_dispenser = auth.TokenDispenser()
 
         self.client = discovery.build(
             YOUTUBE_API_SERVICE_NAME,
             YOUTUBE_API_VERSION,
-            developerKey=google_developer_key
+            developerKey=token_dispenser.google_developer_key
         )
-        self.google_developer_key = google_developer_key
         self.directory = directory
         self.skip_existing = skip_existing
         self.convert_to_mp3 = convert_to_mp3
