@@ -12,7 +12,7 @@ def get_requirements():
 
 setup(
         name='spotify-onthego',
-        version='0.0.3',
+        version='0.0.4',
         description="Download Spotify playlists via YouTube",
         long_description=get_long_description(),
         classifiers=[
