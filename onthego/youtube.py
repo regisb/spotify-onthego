@@ -47,7 +47,7 @@ class Downloader(object):
     def should_skip(self, track):
         glob_extension = ".mp3" if self.convert_to_mp3 else ".*"
         pattern = get_audio_file_path(self.directory, track, glob_extension)
-        return len(glob(pattern)) != 0
+        return len(glob(pattern.encode('utf-8'))) != 0
 
     def convert_or_copy(self, audio_file_path, track):
         ensure_directory_exists(self.directory)
