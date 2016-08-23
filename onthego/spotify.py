@@ -10,20 +10,27 @@ class Client(object):
         self.spotify = spotipy.Spotify(auth=token_dispenser.spotify_token)
 
     def iter_playlist_tracks(self, playlist_id, playlist_owner_id):
-        for item in self.spotify.user_playlist(playlist_owner_id, playlist_id)["tracks"]["items"]:
+        for item in self._iter_items(self.spotify.user_playlist_tracks, playlist_owner_id, playlist_id):
             yield self.api_result_to_track(item["track"])
 
     def iter_my_music(self):
+        for item in self._iter_items(self.spotify.current_user_saved_tracks):
+            yield self.api_result_to_track(item["track"])
+
+    def _iter_items(self, func, *args):
+        """
+        Iterate over multiple pages of item results
+        """
         offset = 0
         limit = 50
         while True:
-            tracks = self.spotify.current_user_saved_tracks(limit=limit, offset=offset)["items"]
-            if len(tracks) == 0:
+            items = func(*args, limit=limit, offset=offset)['items']
+            if len(items) == 0:
                 break
             offset += limit
 
-            for item in tracks:
-                yield self.api_result_to_track(item["track"])
+            for item in items:
+                yield item
 
     def api_result_to_track(self, api_track_result):
         """Convert a 'track' api object to Track
