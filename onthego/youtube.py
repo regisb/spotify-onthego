@@ -72,7 +72,10 @@ class Downloader(object):
 
         tmp_path = get_tmp_path(best)
         print("    Downloading %s to %s" % (video_url, tmp_path))
-        best.download(tmp_path, quiet=True)
+        try:
+            best.download(tmp_path, quiet=True)
+        except IOError:
+            return None
         return tmp_path
 
     def get_video_id(self, track):
