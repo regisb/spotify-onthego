@@ -27,7 +27,7 @@ def download_playlist():
             dst = args.dst
         elif fnmatch(playlist_name, args.playlist):
             # Wildcard match: save in subdirectory
-            dst = os.path.join(args.dst, playlist_name.encode('utf-8'))
+            dst = os.path.join(args.dst, playlist_name.encode('utf-8').replace(os.path.sep, "-"))
         if dst is not None:
             playlist_found = True
             print("Downloading playlist '%s' (id=%s) from owner '%s'" % (
