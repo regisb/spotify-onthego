@@ -38,7 +38,10 @@ class Client(object):
         Album information is fetched and added to the Track object.
         """
         # fetch album info
-        album = self.spotify.album(api_track_result["album"]["id"])
+        album_id = api_track_result["album"]["id"]
+        album = None
+        if album_id is not None:
+	    album = self.spotify.album(album_id)
         return Track(api_track_result["name"], api_track_result["artists"], album)
 
     def iter_playlists(self):
@@ -62,7 +65,7 @@ class Client(object):
 
 class Track(object):
 
-    def __init__(self, name, artists, album):
+    def __init__(self, name, artists, album={'name': ''}):
         self.name = name
         self.album = album
         self.artists = artists
