@@ -38,8 +38,10 @@ class Client(object):
         Album information is fetched and added to the Track object.
         """
         # fetch album info
-        album = self.spotify.album(api_track_result["album"]["id"])
-        return Track(api_track_result["name"], api_track_result["artists"], album)
+        album_id = api_track_result["album"]["id"]
+        album = self.spotify.album(album_id) if album_id else None
+
+        return Track(api_track_result["name"], api_track_result["artists"], album=album)
 
     def iter_playlists(self):
         """Iterate on all user playlists
@@ -62,27 +64,21 @@ class Client(object):
 
 class Track(object):
 
-    def __init__(self, name, artists, album):
+    def __init__(self, name, artists, album=None):
         self.name = name
-        self.album = album
         self.artists = artists
+        if album:
+            self.album_name = album["name"]
+            self.album_art_url = album["images"][0]["url"]
+            # Note that release dates are encoded in Spotify as '%Y-%m-%d',
+            # '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
+            # 4 characters should suffice.
+            self.album_release_date = album['release_date']
+        else:
+            self.album_name = None
+            self.album_art_url = None
+            self.album_release_date = None
 
     @property
     def artist(self):
         return self.artists[0]["name"]
-
-    @property
-    def album_name(self):
-        return self.album["name"]
-
-    @property
-    def album_art_url(self):
-        return self.album["images"][0]["url"]
-
-    @property
-    def album_release_date(self):
-        """Note that release dates are encoded in Spotify as '%Y-%m-%d',
-        '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
-        4 characters should suffice.
-        """
-        return self.album['release_date']

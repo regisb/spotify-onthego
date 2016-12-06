@@ -8,15 +8,18 @@ def tag(filepath, track):
     audiofile = eyed3.load(filepath)
     audiofile.tag.artist = track.artist
     audiofile.tag.title = track.name
-    audiofile.tag.album = track.album_name
-    audiofile.date = track.album_release_date
+    if track.album_name:
+        audiofile.tag.album = track.album_name
+    if track.album_release_date:
+        audiofile.date = track.album_release_date
 
     # Get album art image
-    image_data = requests.get(track.album_art_url).content
-    audiofile.tag.images.set(
-        3,# 3 means 'front cover'
-        image_data,
-        "image/jpeg"
-    )
+    if track.album_art_url:
+        image_data = requests.get(track.album_art_url).content
+        audiofile.tag.images.set(
+            3,# 3 means 'front cover'
+            image_data,
+            "image/jpeg"
+        )
 
     audiofile.tag.save()
