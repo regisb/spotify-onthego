@@ -36,7 +36,8 @@ def download_playlist():
             youtube_downloader = onthego.youtube.Downloader(
                 dst.decode('utf-8'),
                 skip_existing=not args.no_skip,
-                convert_to_mp3=not args.no_convert
+                convert_to_mp3=not args.no_convert,
+                audio_format=args.audio,
             )
             for track in spotify_client.iter_playlist_tracks(playlist_id, playlist_owner_id):
                 youtube_downloader.audio(track)
@@ -54,7 +55,8 @@ def download_my_music():
     youtube_downloader = onthego.youtube.Downloader(
         args.dst.decode('utf-8'),
         skip_existing=not args.no_skip,
-        convert_to_mp3=not args.no_convert
+        convert_to_mp3=not args.no_convert,
+        audio_format=args.audio,
     )
 
     track_count = 0
@@ -67,6 +69,15 @@ def download_my_music():
 def add_common_options_to_parser(parser):
     parser.add_argument("-S", "--no-skip", action='store_true',
             help="Don't skip files that were already downloaded.")
+    parser.add_argument("-a", "--audio", choices=["webm", "ogg", "m4a"],
+                        help="""Preferred audio format to download. By default,
+the best quality audio format will be downloaded. On
+some platforms (e.g: Debian Wheezy), the default avconv
+utility does not support audio conversion from webm, so
+you should specify a different value here.
+Note that this audio file will eventually be converted to mp3 (unless you
+specify --no-convert)""")
     parser.add_argument("-C", "--no-convert", action='store_true',
             help="Don't convert audio files to mp3 format.")
+
     parser.add_argument("dst", help="Destination directory")

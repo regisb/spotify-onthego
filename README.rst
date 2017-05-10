@@ -61,6 +61,56 @@ The Spotify authentication token and credentials will be stored in
 Usage
 -----
 
+::
+
+    $ spotify-mymusic -h
+    usage: spotify-mymusic [-h] [-l LIMIT] [-S] [-a {webm,ogg,m4a}] [-C] dst
+
+    Download the songs from 'Your Music'
+
+    positional arguments:
+      dst                   Destination directory
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -l LIMIT, --limit LIMIT
+                            Limit to top N songs
+      -S, --no-skip         Don't skip files that were already downloaded.
+      -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
+                            Preferred audio format to download. By default, the
+                            best quality audio format will be downloaded. On some
+                            platforms (e.g: Debian Wheezy), the default avconv
+                            utility does not support audio conversion from webm,
+                            so you should specify a different value here. Note
+                            that this audio file will eventually be converted to
+                            mp3 (unless you specify --no-convert)
+      -C, --no-convert      Don't convert audio files to mp3 format.
+
+    $ spotify-playlist -h
+    usage: spotify-playlist [-h] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
+
+    Download the tracks of a Spotify playlist from YouTube
+
+    positional arguments:
+      playlist              Name of playlist. E.g: 'Road music'
+      dst                   Destination directory
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -S, --no-skip         Don't skip files that were already downloaded.
+      -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
+                            Preferred audio format to download. By default, the
+                            best quality audio format will be downloaded. On some
+                            platforms (e.g: Debian Wheezy), the default avconv
+                            utility does not support audio conversion from webm,
+                            so you should specify a different value here. Note
+                            that this audio file will eventually be converted to
+                            mp3 (unless you specify --no-convert)
+      -C, --no-convert      Don't convert audio files to mp3 format.
+
+Examples
+--------
+
 Download all songs from 'My Playlist' and save them as mp3::
 
     spotify-playlist "My Playlist" ./music/myspotifyplaylist/
@@ -81,6 +131,7 @@ In case of 401 error, this may be caused by a previous authorization token that
 did not have the right scope. Just remove the
 :code:`~/.local/share/spotify-onthego/spotify.token` file and start the command
 again.
+
 
 How to contribute
 -----------------

@@ -18,7 +18,16 @@ YOUTUBE_API_VERSION = "v3"
 
 class Downloader(object):
 
-    def __init__(self, directory, skip_existing=True, convert_to_mp3=True):
+    def __init__(self, directory, skip_existing=True, convert_to_mp3=True, audio_format=None):
+        """
+        Args:
+            directory (str): output directory
+            skip_existing (bool): by default, existing files are skipped
+            convert_to_mp3 (bool): by default, downloaded files will be converted to mp3
+            audio_format (str): by default, the best audio files will be
+                downloaded. Set this option to e.g: "web" or "m4a" to select the
+                best audio file only among these formats.
+        """
 
         token_dispenser = auth.TokenDispenser()
 
@@ -30,6 +39,7 @@ class Downloader(object):
         self.directory = directory
         self.skip_existing = skip_existing
         self.convert_to_mp3 = convert_to_mp3
+        self.audio_format = audio_format
 
     def audio(self, track):
         if self.skip_existing and self.should_skip(track):
@@ -68,7 +78,9 @@ class Downloader(object):
             return None
         video_url = "https://www.youtube.com/watch?v={}".format(video_id)
         video = pafy.new(video_url)
-        best = video.getbestaudio()
+        # By default, the best audio format is often webm, which is not
+        # supported by older versions of avconv.
+        best = video.getbestaudio(preftype=self.audio_format or "any")
 
         tmp_path = get_tmp_path(best)
         print("    Downloading %s to %s" % (video_url, tmp_path))
