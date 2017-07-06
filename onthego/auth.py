@@ -1,10 +1,20 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import json
 import os
 
+import appdirs
 import spotipy
 import spotipy.util
+
+
+# Python 3-compatible user input
+try:
+    input = raw_input
+except NameError:
+    pass
+
 
 class TokenDispenser(object):
 
@@ -99,16 +109,16 @@ class TokenDispenser(object):
             raise CredentialsNotFound("Could not parse credentials file", **credentials)
 
     def ask_for_credentials(self, **credentials_found):
-        print("""You need to register as a developer and create a Spotify app in order to use Spotify On The Go.
+        print("""You need to register as a developer and create a Spotify app in order to use spotify-onthego.
 You may create an app here: https://developer.spotify.com/my-applications/#!/applications/create
 You also need to register a youtube app developer key. The app key can be
 obtained for free here: https://console.cloud.google.com/apis/api/youtube/overview
 Please enter your app credentials:""")
-        username = credentials_found.get("USERNAME") or raw_input("Spotify username: ")
-        client_id = credentials_found.get("CLIENT_ID") or raw_input("Spotify client ID: ")
-        client_secret = credentials_found.get("CLIENT_SECRET") or raw_input("Spotify client secret: ")
-        redirect_uri = credentials_found.get("REDIRECT_URI") or raw_input("Spotify redirect URI: ")
-        google_developer_key = credentials_found.get("GOOGLE_DEVELOPER_KEY") or raw_input("Google developer key: ")
+        username = credentials_found.get("USERNAME") or input("Spotify username: ")
+        client_id = credentials_found.get("CLIENT_ID") or input("Spotify client ID: ")
+        client_secret = credentials_found.get("CLIENT_SECRET") or input("Spotify client secret: ")
+        redirect_uri = credentials_found.get("REDIRECT_URI") or input("Spotify redirect URI: ")
+        google_developer_key = credentials_found.get("GOOGLE_DEVELOPER_KEY") or input("Google developer key: ")
         return username, client_id, client_secret, redirect_uri, google_developer_key
 
     def save_credentials(self, username, client_id, client_secret, redirect_uri, google_developer_key):
@@ -131,9 +141,15 @@ Please enter your app credentials:""")
         return self.get_config_file_path("credentials.json")
 
     def get_config_file_path(self, filename):
-        return os.path.join(
-                os.path.expanduser("~/.local/share/spotify-onthego/"),
-                filename)
+        # We used to store config files in ~/.local, so we still need to
+        # support config files stored there
+        config_dir = os.path.expanduser("~/.local/share/spotify-onthego/")
+
+        # This is the more modern way of storing config files (cross-platform)
+        if not os.path.exists(config_dir):
+            config_dir = appdirs.user_config_dir("spotify-onthego")
+
+        return os.path.join(config_dir, filename)
 
     def check_directory_exists(self, path):
         directory = os.path.dirname(path)
@@ -145,5 +161,3 @@ class CredentialsNotFound(Exception):
     def __init__(self, message, **credentials_found):
         super(CredentialsNotFound, self).__init__(message)
         self.credentials_found = credentials_found
-
-

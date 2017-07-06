@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from codecs import open as codecs_open
-from setuptools import setup, find_packages
+from setuptools import setup
 
 def get_long_description():
     with codecs_open('README.rst', encoding='utf-8') as f:
@@ -11,31 +12,31 @@ def get_requirements():
     return [line.strip() for line in open("requirements.txt")]
 
 setup(
-        name='spotify-onthego',
-        version='0.0.5',
-        description="Download Spotify playlists via YouTube",
-        long_description=get_long_description(),
-        classifiers=[
-            "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-            "Development Status :: 4 - Beta",
-            "Topic :: Multimedia :: Sound/Audio :: Capture/Recording",
-        ],
-        keywords='',
-        author=u"Régis Behmo",
-        author_email='regis@behmo.com',
-        url='https://github.com/regisb/spotify-onthego',
-        license='GPL',
-        packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-        include_package_data=True,
-        zip_safe=False,
-        install_requires=get_requirements(),
-        extras_require={
-            'test': ['pytest'],
-        },
-        entry_points={
-            'console_scripts': [
-                'spotify-playlist = onthego.scripts.cli:download_playlist',
-                'spotify-mymusic = onthego.scripts.cli:download_my_music'
-            ]
-        },
+    name='spotify-onthego',
+    version='1.0.0',
+    description="Download Spotify songs and playlists (with YouTube)",
+    long_description=get_long_description(),
+    classifiers=[
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Development Status :: 5 - Production/Stable',
+        'Topic :: Multimedia :: Sound/Audio :: Capture/Recording',
+    ],
+    keywords='spotify youtube download playlist music songs',
+    author=u"Régis Behmo",
+    author_email='nospam@behmo.com',
+    url='https://github.com/regisb/spotify-onthego',
+    license='GPL',
+    packages=['onthego'],
+    install_requires=get_requirements(),
+    entry_points={
+        'console_scripts': [
+            'spotify-playlist = onthego.scripts.cli:download_playlist',
+            'spotify-mymusic = onthego.scripts.cli:download_my_music'
+        ]
+    },
 )

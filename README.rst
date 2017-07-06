@@ -2,33 +2,42 @@
 Spotify On The Go
 -----------------
 
-A utility to download tracks from your Spotify account. The tracks are
-downloaded from YouTube videos and converted as mp3 files.
+Download songs and playlist from Spotify. The tracks are downloaded from
+YouTube videos and converted as mp3 files.
 
 Changelog
-----------
+==========
 
+- 2017-07-06 - v1.0.0 release! `spotify-onthego` is now compatible with Python 3+.
 - 2016-07-09 - Add playlist name wildcard matching
 - 2016-04-17 - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
 - 2016-03-15 - It is now possible to download the tracks from "Your Music > Songs"! See below for details.
 
-Install requirements
---------------------
+Install
+=======
 
-Creating a virtualenv is always a good idea::
+::
 
-    virtualenv venv
-    source venv/bin/activate
+    pip install spotify-onthego
 
-spotify-onthego is for Python 2 only. If Python 3 is the default on your
+`spotify-onthego` is for Python 2 only. If Python 3 is the default on your
 platform, you should create a virtualenv using python2::
 
     virtualenv --python python2.7 venv
     source venv/bin/activate
 
-Install from Github::
+Note that you will need valid Spotify app credentials. If you don't have a
+valid client ID/secret pair of keys, you can create a Spotify app `here
+<https://developer.spotify.com/my-applications/#!/applications/create>`_.
 
-    pip install git+https://github.com/regisb/spotify-onthego.git
+Once you have created a Spotify app, you will also have to add a redirect URI
+for this app ("Add URI").
+
+After the first run of the CLI tool, the authentication token and credentials
+will be stored in a local configuration file.
+
+Requirements
+------------
 
 If you wish to convert the downloaded files to mp3 format, you will need to
 install avconv.
@@ -48,18 +57,32 @@ have gcc installed::
     ./configure --disable-yasm
     make install
 
-Note that you will need valid Spotify app credentials. If you don't have a
-valid client ID/secret pair of keys, you can create a Spotify app `here
-<https://developer.spotify.com/my-applications/#!/applications/create>`_.
-
-Once you have created a Spotify app, you will also have to add a redirect URI
-for this app ("Add URI").
-
-The Spotify authentication token and credentials will be stored in
-~/.local/share/spotify-onthego/
-
 Usage
------
+=====
+
+::
+
+    $ spotify-playlist -h
+    usage: spotify-playlist [-h] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
+
+    Download the tracks of a Spotify playlist from YouTube
+
+    positional arguments:
+      playlist              Name of playlist. E.g: 'Road music'
+      dst                   Destination directory
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -S, --no-skip         Don't skip files that were already downloaded.
+      -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
+                            Preferred audio format to download. By default, the
+                            best quality audio format will be downloaded. On some
+                            platforms (e.g: Debian Wheezy), the default avconv
+                            utility does not support audio conversion from webm,
+                            so you should specify a different value here. Note
+                            that this audio file will eventually be converted to
+                            mp3 (unless you specify --no-convert)
+      -C, --no-convert      Don't convert audio files to mp3 format.
 
 ::
 
@@ -86,30 +109,8 @@ Usage
                             mp3 (unless you specify --no-convert)
       -C, --no-convert      Don't convert audio files to mp3 format.
 
-    $ spotify-playlist -h
-    usage: spotify-playlist [-h] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
-
-    Download the tracks of a Spotify playlist from YouTube
-
-    positional arguments:
-      playlist              Name of playlist. E.g: 'Road music'
-      dst                   Destination directory
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -S, --no-skip         Don't skip files that were already downloaded.
-      -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
-                            Preferred audio format to download. By default, the
-                            best quality audio format will be downloaded. On some
-                            platforms (e.g: Debian Wheezy), the default avconv
-                            utility does not support audio conversion from webm,
-                            so you should specify a different value here. Note
-                            that this audio file will eventually be converted to
-                            mp3 (unless you specify --no-convert)
-      -C, --no-convert      Don't convert audio files to mp3 format.
-
-Examples
---------
+Download playlist
+-----------------
 
 Download all songs from 'My Playlist' and save them as mp3::
 
@@ -119,29 +120,48 @@ Create a cronjob to download your Discover Weekly playlist every monday at 7am::
 
     0 7 * * 1 /home/username/venv/bin/spotify-playlist "Discover Weekly" /home/username/music/discoverweekly
 
+Wildcards are supported, too::
+
+    spotify-playlist "Mixtape*" ./music/
+
+Download favourite songs
+------------------------
+
 Download your 30 most recent tracks from "My Music"::
 
     spotify-mymusic -l 30 ./music/mytracks/
 
-Wildcards are supported, too::
-
-    spotify-playlist "Mixtape*" ./music/
+Troubleshooting
+===============
 
 In case of 401 error, this may be caused by a previous authorization token that
 did not have the right scope. Just remove the
 :code:`~/.local/share/spotify-onthego/spotify.token` file and start the command
 again.
 
+If mp3 generation fails with an error message related to eyed3, check that your
+installed version of eyed3 is at least 0.8::
 
-How to contribute
------------------
+    $ pip freeze | grep eyeD3
+    eyeD3==0.8
+
+
+Development
+===========
 
 See something that's not working for you, or something that you would like to
-be included? Just open a PR with your code, or a Github issue where you
+be included? Just open a `pull request
+<https://github.com/regisb/spotify-onthego/pulls>`_ with your code, or a
+`Github issue <https://github.com/regisb/spotify-onthego/issues>`_ where you
 describe the feature you would like to have. 
 
+TODO
+----
+
+- Make package compatible with python 3
+
 License
--------
+=======
 
 This project is licensed under the `GNU General Public License
 v3.0 <https://opensource.org/licenses/gpl-3.0.html>`_.

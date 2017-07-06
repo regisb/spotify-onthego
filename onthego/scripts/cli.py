@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import argparse
 from fnmatch import fnmatch
@@ -13,7 +14,7 @@ import onthego.youtube
 
 def download_playlist():
     parser = argparse.ArgumentParser(description="Download the tracks of a Spotify playlist from YouTube")
-    parser.add_argument("playlist", help="Name of playlist. E.g: 'Road music'")
+    parser.add_argument("playlist", type=lambda s: unicode(s, 'utf8'), help="Name of playlist. E.g: 'Road music'")
     add_common_options_to_parser(parser)
     args = parser.parse_args()
 
@@ -27,14 +28,14 @@ def download_playlist():
             dst = args.dst
         elif fnmatch(playlist_name, args.playlist):
             # Wildcard match: save in subdirectory
-            dst = os.path.join(args.dst, playlist_name.encode('utf-8').replace(os.path.sep, "-"))
+            dst = os.path.join(args.dst, playlist_name.replace(os.path.sep, "-"))
         if dst is not None:
             playlist_found = True
             print("Downloading playlist '%s' (id=%s) from owner '%s'" % (
                 playlist_name, playlist_id, playlist_owner_id)
             )
             youtube_downloader = onthego.youtube.Downloader(
-                dst.decode('utf-8'),
+                dst,
                 skip_existing=not args.no_skip,
                 convert_to_mp3=not args.no_convert,
                 audio_format=args.audio,
@@ -53,7 +54,7 @@ def download_my_music():
 
     spotify_client = onthego.spotify.Client()
     youtube_downloader = onthego.youtube.Downloader(
-        args.dst.decode('utf-8'),
+        args.dst,
         skip_existing=not args.no_skip,
         convert_to_mp3=not args.no_convert,
         audio_format=args.audio,
@@ -80,4 +81,4 @@ specify --no-convert)""")
     parser.add_argument("-C", "--no-convert", action='store_true',
             help="Don't convert audio files to mp3 format.")
 
-    parser.add_argument("dst", help="Destination directory")
+    parser.add_argument("dst", type=lambda s: unicode(s, 'utf8'), help="Destination directory")

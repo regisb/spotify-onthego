@@ -1,10 +1,15 @@
+from __future__ import unicode_literals
+
 import eyed3
 import requests
+import six
 
 def tag(filepath, track):
     """
     Tag an mp3 file with all the appropriate info, including downloaded album art.
     """
+    if six.PY2:
+        filepath = filepath.encode("utf8")
     audiofile = eyed3.load(filepath)
     audiofile.tag.artist = track.artist
     audiofile.tag.title = track.name

@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 
 from glob import glob
 import os
@@ -57,7 +58,7 @@ class Downloader(object):
     def should_skip(self, track):
         glob_extension = ".mp3" if self.convert_to_mp3 else ".*"
         pattern = get_audio_file_path(self.directory, track, glob_extension)
-        return len(glob(pattern.encode('utf-8'))) != 0
+        return len(glob(pattern)) != 0
 
     def convert_or_copy(self, audio_file_path, track):
         ensure_directory_exists(self.directory)
@@ -90,7 +91,7 @@ class Downloader(object):
     def get_video_id(self, track):
         search_query = (track.name + " " + track.artist).lower()
         feed = self.client.search().list(
-            q=search_query.encode("utf-8"),
+            q=search_query,
             type="video",
             part="id,snippet"
         ).execute()
