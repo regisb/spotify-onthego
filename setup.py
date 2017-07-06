@@ -13,7 +13,7 @@ def get_requirements():
 
 setup(
     name='spotify-onthego',
-    version='1.0.0',
+    version='1.0.1',
     description="Download Spotify songs and playlists (with YouTube)",
     long_description=get_long_description(),
     classifiers=[
@@ -32,7 +32,17 @@ setup(
     url='https://github.com/regisb/spotify-onthego',
     license='GPL',
     packages=['onthego'],
-    install_requires=get_requirements(),
+    install_requires=[
+        "appdirs",
+        "eyeD3<0.9",
+        "oauth2client==2.0.1",
+        "google-api-python-client==1.5.0",
+        "spotipy==2.3.8",
+        "pafy",
+        "pathlib",
+        "six",
+        "youtube-dl"
+    ],
     entry_points={
         'console_scripts': [
             'spotify-playlist = onthego.scripts.cli:download_playlist',

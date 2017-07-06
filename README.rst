@@ -155,11 +155,6 @@ be included? Just open a `pull request
 `Github issue <https://github.com/regisb/spotify-onthego/issues>`_ where you
 describe the feature you would like to have. 
 
-TODO
-----
-
-- Make package compatible with python 3
-
 License
 =======
 
