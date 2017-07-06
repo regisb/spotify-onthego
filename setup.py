@@ -13,7 +13,7 @@ def get_requirements():
 
 setup(
     name='spotify-onthego',
-    version='1.0.1',
+    version='1.0.2',
     description="Download Spotify songs and playlists (with YouTube)",
     long_description=get_long_description(),
     classifiers=[
@@ -45,8 +45,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'spotify-playlist = onthego.scripts.cli:download_playlist',
-            'spotify-mymusic = onthego.scripts.cli:download_my_music'
+            'spotify-playlist = onthego.cli:download_playlist',
+            'spotify-mymusic = onthego.cli:download_my_music'
         ]
     },
 )
