@@ -10,11 +10,18 @@ import sys
 import onthego.auth
 import onthego.spotify
 import onthego.youtube
+import six
+
+def parse_arg(s):
+    """In python 2, argparse arguments are str and need to be decoded to unicode."""
+    if six.PY2:
+        return six.text_type(s, "utf8")
+    return s
 
 
 def download_playlist():
     parser = argparse.ArgumentParser(description="Download the tracks of a Spotify playlist from YouTube")
-    parser.add_argument("playlist", type=lambda s: unicode(s, 'utf8'), help="Name of playlist. E.g: 'Road music'")
+    parser.add_argument("playlist", type=parse_arg, help="Name of playlist. E.g: 'Road music'")
     add_common_options_to_parser(parser)
     args = parser.parse_args()
 
@@ -81,4 +88,4 @@ specify --no-convert)""")
     parser.add_argument("-C", "--no-convert", action='store_true',
             help="Don't convert audio files to mp3 format.")
 
-    parser.add_argument("dst", type=lambda s: unicode(s, 'utf8'), help="Destination directory")
+    parser.add_argument("dst", type=parse_arg, help="Destination directory")
