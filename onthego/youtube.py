@@ -74,30 +74,48 @@ class Downloader(object):
             shutil.move(audio_file_path, dst_path)
 
     def download_to_tmp(self, track):
-        video_id = self.get_video_id(track)
-        if video_id is None:
+        video = self.get_video(track)
+        if video is None:
             return None
-        video_url = "https://www.youtube.com/watch?v={}".format(video_id)
-        video = pafy.new(video_url)
+
         # By default, the best audio format is often webm, which is not
         # supported by older versions of avconv.
         best = video.getbestaudio(preftype=self.audio_format or "any")
 
         tmp_path = get_tmp_path(best)
-        print("    Downloading %s to %s" % (video_url, tmp_path))
+        print("    Downloading %s to %s" % (video.watchv_url, tmp_path))
         best.download(tmp_path, quiet=True)
         return tmp_path
 
-    def get_video_id(self, track):
+    def get_video(self, track):
+        """Get the pafy video that best matches the requested track"""
+        for video_id in self.iter_video_id(track):
+            video_url = "https://www.youtube.com/watch?v={}".format(video_id)
+            try:
+                # For videos that are unavailable in the current country, this
+                # will raise an IOError with message "YouTube said: This video
+                # contains content from xxx, who has blocked it in your country
+                # on copyright grounds."
+                return pafy.new(video_url)
+            except IOError as e:
+                if "blocked it in your country on copyright grounds" in str(e):
+                    continue
+                else:
+                    raise
+
+    def iter_video_id(self, track):
+        """Iterate over youtube video ids that match the queried track"""
         search_query = (track.name + " " + track.artist).lower()
         feed = self.client.search().list(
             q=search_query,
             type="video",
             part="id,snippet"
         ).execute()
-        # return first entry with valid video id
+
         for entry in feed["items"]:
-            return entry["id"]["videoId"]
+            video_id = entry["id"]["videoId"]
+            if video_id is not None:
+                yield video_id
 
 
 def get_audio_file_path(directory, track, extension):
