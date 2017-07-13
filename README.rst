@@ -8,6 +8,9 @@ YouTube videos and converted as mp3 files.
 Changelog
 ==========
 
+- 2017-07-13 - v1.0.3:
+    - Skip copyrighted videos
+    - Fix unicode argument parsing in python 3
 - 2017-07-06 - v1.0.0 release! `spotify-onthego` is now compatible with Python 3+.
 - 2016-07-09 - Add playlist name wildcard matching
 - 2016-04-17 - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
