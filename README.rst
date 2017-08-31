@@ -8,13 +8,16 @@ YouTube videos and converted as mp3 files.
 Changelog
 ==========
 
-- 2017-07-13 - v1.0.3:
-    - Skip copyrighted videos
-    - Fix unicode argument parsing in python 3
-- 2017-07-06 - v1.0.0 release! `spotify-onthego` is now compatible with Python 3+.
-- 2016-07-09 - Add playlist name wildcard matching
-- 2016-04-17 - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
-- 2016-03-15 - It is now possible to download the tracks from "Your Music > Songs"! See below for details.
+- 2017-08-31 v1.0.4: Introduce interactive mode for Youtube result selection
+- 2017-07-13 v1.0.3:
+
+  + Skip copyrighted videos
+  + Fix unicode argument parsing in python 3
+
+- 2017-07-06: v1.0.0 release! `spotify-onthego` is now compatible with Python 3+.
+- 2016-07-09: Add playlist name wildcard matching
+- 2016-04-17: - Add album art to the mp3 file ID3 tags (contribution by @xabixab)
+- 2016-03-15: It is now possible to download the tracks from "Your Music > Songs"! See below for details.
 
 Install
 =======
@@ -60,7 +63,7 @@ Usage
 ::
 
     $ spotify-playlist -h
-    usage: spotify-playlist [-h] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
+    usage: spotify-playlist [-h] [-i] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
 
     Download the tracks of a Spotify playlist from YouTube
 
@@ -70,6 +73,8 @@ Usage
 
     optional arguments:
       -h, --help            show this help message and exit
+      -i, --interactive     Interactively select the song to download from
+                            Youtube.
       -S, --no-skip         Don't skip files that were already downloaded.
       -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
                             Preferred audio format to download. By default, the
@@ -84,7 +89,7 @@ Usage
 ::
 
     $ spotify-mymusic -h
-    usage: spotify-mymusic [-h] [-l LIMIT] [-S] [-a {webm,ogg,m4a}] [-C] dst
+    usage: spotify-mymusic [-h] [-l LIMIT] [-i] [-S] [-a {webm,ogg,m4a}] [-C] dst
 
     Download the songs from 'Your Music'
 
@@ -95,6 +100,8 @@ Usage
       -h, --help            show this help message and exit
       -l LIMIT, --limit LIMIT
                             Limit to top N songs
+      -i, --interactive     Interactively select the song to download from
+                            Youtube.
       -S, --no-skip         Don't skip files that were already downloaded.
       -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
                             Preferred audio format to download. By default, the
@@ -121,12 +128,36 @@ Wildcards are supported, too::
 
     spotify-playlist "Mixtape*" ./music/
 
-Download favourite songs
+Download favorite songs
 ------------------------
 
 Download your 30 most recent tracks from "My Music"::
 
     spotify-mymusic -l 30 ./music/mytracks/
+
+Interactive mode
+----------------
+
+By default, ``spotify-onthego`` downloads the first match found on Youtube for
+the search ``"<song title> <artist name>"`` (song and artist separated by an
+empty space). If you want to manually select the Youtube result to download,
+run in interactive mode with the ``-i`` option::
+
+    $ spotify-mymusic -i mymusic/
+    ++ Processing Porcupine Tree - Deadwing
+    [1] Porcupine Tree - DeadWing https://www.youtube.com/watch?v=GMEwM3YHiME
+    [2] Porcupine Tree - Deadwing https://www.youtube.com/watch?v=-Rwp-yvmcRM
+    [3] Porcupine Tree - Deadwing [Lyrics on Video] https://www.youtube.com/watch?v=dDepB1mwPhc
+    [4] Making of Deadwing https://www.youtube.com/watch?v=ZuYjGfaixDM
+    [5] Porcupine Tree- Mellotron Scratch https://www.youtube.com/watch?v=Ag2zXiiuF5Q
+    [6] Porcupine Tree - Shesmovedon (Deadwing ver.) https://www.youtube.com/watch?v=OtfJcTBklh8
+    [7] Porcupine Tree - Shallow (lyrics) https://www.youtube.com/watch?v=7_8UmXv5Xac
+    [8] Porcupine Tree - Arriving Somewhere But Not Here (lyrics on screen) https://www.youtube.com/watch?v=f2ROFnA4HRA
+    [9] Porcupine Tree - Deadwing (Lyrics) https://www.youtube.com/watch?v=tMMlEZCaQTY
+    [10] Deadwing- Porcupine Tree(Drum Cover) https://www.youtube.com/watch?v=Zb5KTnXGiNU
+    Select song to download (default: 1, next=n):
+
+Of course, interactive mode should not be used in automated cron jobs.
 
 Troubleshooting
 ===============

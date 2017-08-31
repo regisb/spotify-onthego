@@ -46,6 +46,7 @@ def download_playlist():
                 skip_existing=not args.no_skip,
                 convert_to_mp3=not args.no_convert,
                 audio_format=args.audio,
+                interactive=args.interactive,
             )
             for track in spotify_client.iter_playlist_tracks(playlist_id, playlist_owner_id):
                 youtube_downloader.audio(track)
@@ -65,6 +66,7 @@ def download_my_music():
         skip_existing=not args.no_skip,
         convert_to_mp3=not args.no_convert,
         audio_format=args.audio,
+        interactive=args.interactive,
     )
 
     track_count = 0
@@ -75,6 +77,8 @@ def download_my_music():
         track_count += 1
 
 def add_common_options_to_parser(parser):
+    parser.add_argument("-i", "--interactive", action='store_true',
+            help="Interactively select the song to download from Youtube.")
     parser.add_argument("-S", "--no-skip", action='store_true',
             help="Don't skip files that were already downloaded.")
     parser.add_argument("-a", "--audio", choices=["webm", "ogg", "m4a"],

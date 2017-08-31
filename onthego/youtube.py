@@ -7,19 +7,15 @@ import shutil
 import subprocess
 import tempfile
 
-from apiclient import discovery
-import pafy
 
-from . import auth
 from . import id3
-
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
+from . import search
 
 
 class Downloader(object):
 
-    def __init__(self, directory, skip_existing=True, convert_to_mp3=True, audio_format=None):
+    def __init__(self, directory, skip_existing=True, convert_to_mp3=True,
+                 audio_format=None, interactive=False):
         """
         Args:
             directory (str): output directory
@@ -28,19 +24,15 @@ class Downloader(object):
             audio_format (str): by default, the best audio files will be
                 downloaded. Set this option to e.g: "web" or "m4a" to select the
                 best audio file only among these formats.
+            interactive (bool): Set to True to let the user interactively
+                select the best matching Youtube video.
         """
 
-        token_dispenser = auth.TokenDispenser()
-
-        self.client = discovery.build(
-            YOUTUBE_API_SERVICE_NAME,
-            YOUTUBE_API_VERSION,
-            developerKey=token_dispenser.google_developer_key
-        )
         self.directory = directory
         self.skip_existing = skip_existing
         self.convert_to_mp3 = convert_to_mp3
         self.audio_format = audio_format
+        self.interactive = interactive
 
     def audio(self, track):
         if self.skip_existing and self.should_skip(track):
@@ -74,7 +66,7 @@ class Downloader(object):
             shutil.move(audio_file_path, dst_path)
 
     def download_to_tmp(self, track):
-        video = self.get_video(track)
+        video = search.best_match(track, interactive=self.interactive)
         if video is None:
             return None
 
@@ -86,36 +78,6 @@ class Downloader(object):
         print("    Downloading %s to %s" % (video.watchv_url, tmp_path))
         best.download(tmp_path, quiet=True)
         return tmp_path
-
-    def get_video(self, track):
-        """Get the pafy video that best matches the requested track"""
-        for video_id in self.iter_video_id(track):
-            video_url = "https://www.youtube.com/watch?v={}".format(video_id)
-            try:
-                # For videos that are unavailable in the current country, this
-                # will raise an IOError with message "YouTube said: This video
-                # contains content from xxx, who has blocked it in your country
-                # on copyright grounds."
-                return pafy.new(video_url)
-            except IOError as e:
-                if "blocked it in your country on copyright grounds" in str(e):
-                    continue
-                else:
-                    raise
-
-    def iter_video_id(self, track):
-        """Iterate over youtube video ids that match the queried track"""
-        search_query = (track.name + " " + track.artist).lower()
-        feed = self.client.search().list(
-            q=search_query,
-            type="video",
-            part="id,snippet"
-        ).execute()
-
-        for entry in feed["items"]:
-            video_id = entry["id"]["videoId"]
-            if video_id is not None:
-                yield video_id
 
 
 def get_audio_file_path(directory, track, extension):
