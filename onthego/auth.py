@@ -44,7 +44,6 @@ class TokenDispenser(object):
             self.spotify_username,
             client_id=self.spotify_client_id,
             client_secret=self.spotify_client_secret,
-            redirect_uri=self.spotify_redirect_uri,
             scope="playlist-read-private user-library-read"
         )
         return token
@@ -84,11 +83,8 @@ class TokenDispenser(object):
     def spotify_client_secret(self):
         return self.credentials[2]
     @property
-    def spotify_redirect_uri(self):
-        return self.credentials[3]
-    @property
     def google_developer_key(self):
-        return self.credentials[4]
+        return self.credentials[3]
 
     def load_credentials(self):
         credentials_path = self.get_credentials_path()
@@ -102,7 +98,6 @@ class TokenDispenser(object):
                 credentials["USERNAME"],
                 credentials["CLIENT_ID"],
                 credentials["CLIENT_SECRET"],
-                credentials["REDIRECT_URI"],
                 credentials["GOOGLE_DEVELOPER_KEY"]
             )
         except (ValueError, KeyError):
@@ -117,11 +112,10 @@ Please enter your app credentials:""")
         username = credentials_found.get("USERNAME") or input("Spotify username: ")
         client_id = credentials_found.get("CLIENT_ID") or input("Spotify client ID: ")
         client_secret = credentials_found.get("CLIENT_SECRET") or input("Spotify client secret: ")
-        redirect_uri = credentials_found.get("REDIRECT_URI") or input("Spotify redirect URI: ")
         google_developer_key = credentials_found.get("GOOGLE_DEVELOPER_KEY") or input("Google developer key: ")
-        return username, client_id, client_secret, redirect_uri, google_developer_key
+        return username, client_id, client_secret, google_developer_key
 
-    def save_credentials(self, username, client_id, client_secret, redirect_uri, google_developer_key):
+    def save_credentials(self, username, client_id, client_secret, google_developer_key):
         credentials_path = self.get_credentials_path()
         print("Saving Spotify credentials to", credentials_path)
         self.check_directory_exists(credentials_path)
@@ -130,7 +124,6 @@ Please enter your app credentials:""")
                 "USERNAME": username,
                 "CLIENT_ID": client_id,
                 "CLIENT_SECRET": client_secret,
-                "REDIRECT_URI": redirect_uri,
                 "GOOGLE_DEVELOPER_KEY": google_developer_key,
             }, credentials_file)
 
