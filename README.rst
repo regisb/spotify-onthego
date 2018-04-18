@@ -30,6 +30,9 @@ Note that you will need valid Spotify app credentials. If you don't have a
 valid client ID/secret pair of keys, you can create a Spotify app `here
 <https://developer.spotify.com/my-applications/#!/applications/create>`_.
 
+Once you have created a Spotify app, you will also have to add a redirect URI
+for this app ("Add URI").
+
 After the first run of the CLI tool, the authentication token and credentials
 will be stored in a local configuration file.
 
