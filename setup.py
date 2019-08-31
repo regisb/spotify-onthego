@@ -9,7 +9,7 @@ def get_long_description():
         return f.read()
 
 def get_requirements():
-    return [line.strip() for line in open("requirements.txt")]
+    return [line.strip() for line in open("requirements.in")]
 
 setup(
     name='spotify-onthego',
@@ -22,6 +22,8 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Development Status :: 5 - Production/Stable',
         'Topic :: Multimedia :: Sound/Audio :: Capture/Recording',
@@ -32,17 +34,7 @@ setup(
     url='https://github.com/regisb/spotify-onthego',
     license='GPL',
     packages=['onthego'],
-    install_requires=[
-        "appdirs",
-        "eyeD3>=0.8.4",
-        "oauth2client==2.0.1",
-        "google-api-python-client==1.5.0",
-        "spotipy==2.3.8",
-        "pafy",
-        "pathlib",
-        "six",
-        "youtube-dl"
-    ],
+    install_requires=get_requirements(),
     entry_points={
         'console_scripts': [
             'spotify-playlist = onthego.cli:download_playlist',
