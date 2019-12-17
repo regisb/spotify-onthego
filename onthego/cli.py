@@ -13,9 +13,7 @@ def download_playlist():
     parser = argparse.ArgumentParser(
         description="Download the tracks of a Spotify playlist from YouTube"
     )
-    parser.add_argument(
-        "playlist", help="Name of playlist. E.g: 'Road music'"
-    )
+    parser.add_argument("playlist", help="Name of playlist. E.g: 'Road music'")
     add_common_options_to_parser(parser)
     args = parser.parse_args()
 
