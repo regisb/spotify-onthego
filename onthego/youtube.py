@@ -13,9 +13,14 @@ from . import search
 
 
 class Downloader(object):
-
-    def __init__(self, directory, skip_existing=True, convert_to_mp3=True,
-                 audio_format=None, interactive=False):
+    def __init__(
+        self,
+        directory,
+        skip_existing=True,
+        convert_to_mp3=True,
+        audio_format=None,
+        interactive=False,
+    ):
         """
         Args:
             directory (str): output directory
@@ -42,7 +47,10 @@ class Downloader(object):
         print("++ Processing %s - %s" % (track.artist, track.name))
         audio_file_path = self.download_to_tmp(track)
         if audio_file_path is None:
-            print("---- No You Tube video found for '%s - %s'" % (track.artist, track.name))
+            print(
+                "---- No You Tube video found for '%s - %s'"
+                % (track.artist, track.name)
+            )
             return
 
         self.convert_or_copy(audio_file_path, track)
@@ -84,6 +92,7 @@ def get_audio_file_path(directory, track, extension):
     filename = "%s - %s%s" % (track.artist, track.name, extension)
     return os.path.join(directory, filter_filename(filename))
 
+
 def convert(src_path, dst_path):
     """
     Convert a file to mp3 and remove the original file.
@@ -95,18 +104,22 @@ def convert(src_path, dst_path):
         raise
     os.remove(src_path)
 
+
 def ensure_directory_exists(dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+
 def remove_file(path):
     if os.path.exists(path):
         os.remove(path)
+
 
 def get_tmp_path(result_stream):
     filename = result_stream.title + "." + result_stream.extension
     filename = filter_filename(filename)
     return os.path.join(tempfile.gettempdir(), filename)
 
+
 def filter_filename(filename):
-    return filename.replace('/', ' ').replace('\\', ' ')
+    return filename.replace("/", " ").replace("\\", " ")

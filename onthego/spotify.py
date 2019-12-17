@@ -4,15 +4,17 @@ import spotipy
 
 from . import auth
 
-class Client(object):
 
+class Client(object):
     def __init__(self):
         token_dispenser = auth.TokenDispenser()
         self.spotify_username = token_dispenser.spotify_username
         self.spotify = spotipy.Spotify(auth=token_dispenser.spotify_token)
 
     def iter_playlist_tracks(self, playlist_id, playlist_owner_id):
-        for item in self._iter_items(self.spotify.user_playlist_tracks, playlist_owner_id, playlist_id):
+        for item in self._iter_items(
+            self.spotify.user_playlist_tracks, playlist_owner_id, playlist_id
+        ):
             yield self.api_result_to_track(item["track"])
 
     def iter_my_music(self):
@@ -26,7 +28,7 @@ class Client(object):
         offset = 0
         limit = 50
         while True:
-            items = func(*args, limit=limit, offset=offset)['items']
+            items = func(*args, limit=limit, offset=offset)["items"]
             if len(items) == 0:
                 break
             offset += limit
@@ -56,16 +58,17 @@ class Client(object):
         offset = 0
         limit = 50
         while True:
-            playlists = self.spotify.user_playlists(self.spotify_username, limit=limit, offset=offset)["items"]
+            playlists = self.spotify.user_playlists(
+                self.spotify_username, limit=limit, offset=offset
+            )["items"]
             if len(playlists) == 0:
                 break
             offset += limit
             for playlist in playlists:
-                yield playlist["id"], playlist["name"], playlist['owner']['id']
+                yield playlist["id"], playlist["name"], playlist["owner"]["id"]
 
 
 class Track(object):
-
     def __init__(self, name, artists, album=None):
         self.name = name
         self.artists = artists
@@ -75,7 +78,7 @@ class Track(object):
             # Note that release dates are encoded in Spotify as '%Y-%m-%d',
             # '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
             # 4 characters should suffice.
-            self.album_release_date = album['release_date']
+            self.album_release_date = album["release_date"]
         else:
             self.album_name = None
             self.album_art_url = None

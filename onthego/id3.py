@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import eyed3
 import requests
 
+
 def tag(filepath, track):
     """
     Tag an mp3 file with all the appropriate info, including downloaded album art.
@@ -18,10 +19,6 @@ def tag(filepath, track):
     # Get album art image
     if track.album_art_url:
         image_data = requests.get(track.album_art_url).content
-        audiofile.tag.images.set(
-            3,# 3 means 'front cover'
-            image_data,
-            "image/jpeg"
-        )
+        audiofile.tag.images.set(3, image_data, "image/jpeg")  # 3 means 'front cover'
 
     audiofile.tag.save()

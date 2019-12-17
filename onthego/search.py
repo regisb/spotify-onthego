@@ -8,12 +8,13 @@ from six.moves import input
 from . import auth
 
 
-
 def best_match(track, interactive=False):
     return get_video_interactively(track) if interactive else get_video(track)
 
+
 def get_video_url(video_id):
     return "https://www.youtube.com/watch?v={}".format(video_id)
+
 
 def get_video(track):
     """Get the pafy video that best matches the requested track"""
@@ -22,6 +23,7 @@ def get_video(track):
             return make_pafy_video(get_video_url(video_id))
         except BlockedVideoError:
             continue
+
 
 def get_video_interactively(track):
     results = []
@@ -39,9 +41,10 @@ def get_video_interactively(track):
         result = pick_result(results, new_results, has_next=False)
     return result
 
+
 def pick_result(results, new_results, has_next=True):
     for pos, result in enumerate(new_results):
-        print("[{}] {} {}".format(pos+len(results)+1, result[1], result[0]))
+        print("[{}] {} {}".format(pos + len(results) + 1, result[1], result[0]))
 
     while new_results:
         results.append(new_results.pop(0))
@@ -59,12 +62,14 @@ def pick_result(results, new_results, has_next=True):
         if choice.isdigit():
             choice = int(choice)
             if choice <= len(results) and choice > 0:
-                video_url = results[choice-1][0]
+                video_url = results[choice - 1][0]
                 try:
                     return make_pafy_video(video_url)
                 except BlockedVideoError:
-                    print("Your choice is unavailable in your country of "
-                          "origin. Please choose a different source.")
+                    print(
+                        "Your choice is unavailable in your country of "
+                        "origin. Please choose a different source."
+                    )
 
         print("Invalid choice: {}".format(choice))
 
@@ -78,18 +83,19 @@ def iter_search_results(track):
     client = discovery.build(
         YOUTUBE_API_SERVICE_NAME,
         YOUTUBE_API_VERSION,
-        developerKey=token_dispenser.google_developer_key
+        developerKey=token_dispenser.google_developer_key,
     )
 
     search_query = (track.name + " " + track.artist).lower()
     page_token = None
     while True:
-        feed = client.search().list(
-            q=search_query,
-            type="video",
-            part="id,snippet",
-            pageToken=page_token,
-        ).execute()
+        feed = (
+            client.search()
+            .list(
+                q=search_query, type="video", part="id,snippet", pageToken=page_token,
+            )
+            .execute()
+        )
 
         for entry in feed["items"]:
             video_id = entry["id"]["videoId"]
@@ -100,6 +106,7 @@ def iter_search_results(track):
         page_token = feed.get("nextPageToken")
         if page_token is None:
             break
+
 
 def make_pafy_video(video_url):
     try:
@@ -113,6 +120,7 @@ def make_pafy_video(video_url):
             raise BlockedVideoError
         else:
             raise
+
 
 class BlockedVideoError(Exception):
     pass
