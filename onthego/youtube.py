@@ -94,8 +94,19 @@ def convert(src_path, dst_path):
     """
     Convert a file to mp3 and remove the original file.
     """
+    executable = None
+    for candidate in ["ffmpeg", "avconv"]:
+        if shutil.which(candidate):
+            executable = candidate
+            break
+    if executable is None:
+        raise ValueError(
+            "Either ffmpeg or avconv must be installed in order to convert audio files"
+            " to mp3. If you do not wish to convert files to mp3, use the --no-convert"
+            " option"
+        )
     try:
-        subprocess.call(["avconv", "-v", "quiet", "-i", src_path, dst_path])
+        subprocess.call([executable, "-v", "quiet", "-i", src_path, dst_path])
     except KeyboardInterrupt:
         os.remove(dst_path)
         raise

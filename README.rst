@@ -40,28 +40,19 @@ Requirements
 ------------
 
 If you wish to convert the downloaded files to mp3 format, you will need to
-install avconv.
+install ffmpeg or avconv.
 
-For Debian/Ubuntu installation::
+On Debian/Ubuntu::
 
-    sudo apt-get install libav-tools
+    sudo apt-get install ffmpeg
 
-For OS X installation you will need to compile from source and you will need to
-have gcc installed::
-
-    mkdir avconv
-    cd avconv
-    wget https://libav.org/releases/libav-11.tar.xz
-    tar xjf libav-11.tar.xz
-    cd libav-11
-    ./configure --disable-yasm
-    make install
+On Mac OS, just follow the instructions from the `official ffmpeg website <https://www.ffmpeg.org/download.html>`__.
 
 Usage
 =====
 
 ::
-
+    
     $ spotify-playlist -h
     usage: spotify-playlist [-h] [-i] [-S] [-a {webm,ogg,m4a}] [-C] playlist dst
 
@@ -79,7 +70,7 @@ Usage
       -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
                             Preferred audio format to download. By default, the
                             best quality audio format will be downloaded. On some
-                            platforms (e.g: Debian Wheezy), the default avconv
+                            platforms (e.g: Debian Wheezy), the default ffmpeg
                             utility does not support audio conversion from webm,
                             so you should specify a different value here. Note
                             that this audio file will eventually be converted to
@@ -106,7 +97,7 @@ Usage
       -a {webm,ogg,m4a}, --audio {webm,ogg,m4a}
                             Preferred audio format to download. By default, the
                             best quality audio format will be downloaded. On some
-                            platforms (e.g: Debian Wheezy), the default avconv
+                            platforms (e.g: Debian Wheezy), the default ffmpeg
                             utility does not support audio conversion from webm,
                             so you should specify a different value here. Note
                             that this audio file will eventually be converted to

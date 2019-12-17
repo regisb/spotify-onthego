@@ -101,7 +101,7 @@ def add_common_options_to_parser(parser):
         choices=["webm", "ogg", "m4a"],
         help="""Preferred audio format to download. By default,
 the best quality audio format will be downloaded. On
-some platforms (e.g: Debian Wheezy), the default avconv
+some platforms (e.g: Debian Wheezy), the default ffmpeg
 utility does not support audio conversion from webm, so
 you should specify a different value here.
 Note that this audio file will eventually be converted to mp3 (unless you
