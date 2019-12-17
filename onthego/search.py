@@ -1,9 +1,5 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from apiclient import discovery
 import pafy
-from six.moves import input
 
 from . import auth
 
@@ -61,7 +57,7 @@ def pick_result(results, new_results, has_next=True):
             choice = "1"
         if choice.isdigit():
             choice = int(choice)
-            if choice <= len(results) and choice > 0:
+            if 0 < choice <= len(results):
                 video_url = results[choice - 1][0]
                 try:
                     return make_pafy_video(video_url)
@@ -89,13 +85,13 @@ def iter_search_results(track):
     search_query = (track.name + " " + track.artist).lower()
     page_token = None
     while True:
-        feed = (
-            client.search()
-            .list(
-                q=search_query, type="video", part="id,snippet", pageToken=page_token,
-            )
-            .execute()
-        )
+        query = {
+            "q": search_query,
+            "type": "video",
+            "part": "id,snippet",
+            "pageToken": page_token,
+        }
+        feed = client.search().list(**query).execute()  # pylint: disable=no-member
 
         for entry in feed["items"]:
             video_id = entry["id"]["videoId"]
@@ -118,8 +114,7 @@ def make_pafy_video(video_url):
     except IOError as e:
         if "blocked it in your country on copyright grounds" in str(e):
             raise BlockedVideoError
-        else:
-            raise
+        raise
 
 
 class BlockedVideoError(Exception):

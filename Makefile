@@ -12,12 +12,12 @@ format:
 
 ###### Testing
 
-test: test-format
+test: test-lint test-format ## Run all tests
 
-test-format:	
+test-format: ## Run formatting tests
 	black --check --diff ./onthego
 	
-test-lint:
+test-lint: ## Run lint tests
 	pylint --rcfile=./.pylintrc ./onthego
 
 ###### Additional commands

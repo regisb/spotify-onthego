@@ -12,7 +12,7 @@ from . import id3
 from . import search
 
 
-class Downloader(object):
+class Downloader:
     def __init__(
         self,
         directory,

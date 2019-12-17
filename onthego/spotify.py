@@ -5,7 +5,7 @@ import spotipy
 from . import auth
 
 
-class Client(object):
+class Client:
     def __init__(self):
         token_dispenser = auth.TokenDispenser()
         self.spotify_username = token_dispenser.spotify_username
@@ -21,7 +21,8 @@ class Client(object):
         for item in self._iter_items(self.spotify.current_user_saved_tracks):
             yield self.api_result_to_track(item["track"])
 
-    def _iter_items(self, func, *args):
+    @staticmethod
+    def _iter_items(func, *args):
         """
         Iterate over multiple pages of item results
         """
@@ -68,21 +69,23 @@ class Client(object):
                 yield playlist["id"], playlist["name"], playlist["owner"]["id"]
 
 
-class Track(object):
+class Track:
     def __init__(self, name, artists, album=None):
         self.name = name
         self.artists = artists
+        self.album_name = None
+        self.album_art_url = None
+        self.album_release_date = None
         if album:
-            self.album_name = album["name"]
-            self.album_art_url = album["images"][0]["url"]
-            # Note that release dates are encoded in Spotify as '%Y-%m-%d',
-            # '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
-            # 4 characters should suffice.
-            self.album_release_date = album["release_date"]
-        else:
-            self.album_name = None
-            self.album_art_url = None
-            self.album_release_date = None
+            self.save_album(album)
+
+    def save_album(self, album):
+        self.album_name = album["name"]
+        self.album_art_url = album["images"][0]["url"]
+        # Note that release dates are encoded in Spotify as '%Y-%m-%d',
+        # '%Y-%m' or '%Y'. If you wish to obtain just the release year, the first
+        # 4 characters should suffice.
+        self.album_release_date = album["release_date"]
 
     @property
     def artist(self):
