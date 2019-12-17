@@ -5,5 +5,4 @@ google-api-python-client
 spotipy
 pafy
 pathlib
-six
 youtube-dl

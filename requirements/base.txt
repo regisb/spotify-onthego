@@ -22,7 +22,7 @@ pyasn1==0.4.6             # via oauth2client, pyasn1-modules, rsa
 python-magic==0.4.15      # via eyed3
 requests==2.22.0          # via spotipy
 rsa==4.0                  # via google-auth, oauth2client
-six==1.12.0
+six==1.12.0               # via eyed3, google-api-python-client, google-auth, oauth2client
 spotipy==2.4.4
 uritemplate==3.0.0        # via google-api-python-client
 urllib3==1.25.3           # via requests
