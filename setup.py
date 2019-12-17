@@ -1,15 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 from codecs import open as codecs_open
 from setuptools import setup
+
+here = os.path.abspath(os.path.dirname(__file__))
 
 def get_long_description():
     with codecs_open('README.rst', encoding='utf-8') as f:
         return f.read()
 
 def get_requirements():
-    return [line.strip() for line in open("requirements.in")]
+    return [
+        line.strip() for line in open(os.path.join(here, "requirements", "base.in"))
+    ]
 
 setup(
     name='spotify-onthego',

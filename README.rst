@@ -183,6 +183,18 @@ be included? Just open a `pull request
 `Github issue <https://github.com/regisb/spotify-onthego/issues>`_ where you
 describe the feature you would like to have. 
 
+To setup a development environment, install the ``dev`` requirements::
+    
+    pip install -r requirements/dev.txt
+
+Code should be `black-formatted <https://black.readthedocs.io/en/stable/>`__. To automatically format your code, run::
+    
+    make format
+
+Periodically run code lint and formatting tests with:
+
+    make test
+
 License
 =======
 
