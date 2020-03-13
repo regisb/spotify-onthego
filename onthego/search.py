@@ -1,5 +1,4 @@
 from apiclient import discovery
-import pafy
 
 from . import auth
 
@@ -13,10 +12,10 @@ def get_video_url(video_id):
 
 
 def get_video(track):
-    """Get the pafy video that best matches the requested track"""
+    """Get the video url that best matches the requested track"""
     for video_id, _video_title in iter_search_results(track):
         try:
-            return make_pafy_video(get_video_url(video_id))
+            return get_video_url(video_id)
         except BlockedVideoError:
             continue
 
@@ -60,7 +59,7 @@ def pick_result(results, new_results, has_next=True):
             if 0 < choice <= len(results):
                 video_url = results[choice - 1][0]
                 try:
-                    return make_pafy_video(video_url)
+                    return video_url
                 except BlockedVideoError:
                     print(
                         "Your choice is unavailable in your country of "
@@ -102,19 +101,6 @@ def iter_search_results(track):
         page_token = feed.get("nextPageToken")
         if page_token is None:
             break
-
-
-def make_pafy_video(video_url):
-    try:
-        # For videos that are unavailable in the current country, this
-        # will raise an IOError with message "YouTube said: This video
-        # contains content from xxx, who has blocked it in your country
-        # on copyright grounds."
-        return pafy.new(video_url)
-    except IOError as e:
-        if "blocked it in your country on copyright grounds" in str(e):
-            raise BlockedVideoError
-        raise
 
 
 class BlockedVideoError(Exception):

@@ -1,9 +1,8 @@
 from glob import glob
 import os
-import shutil
-import subprocess
-import tempfile
+import sys
 
+import youtube_dl
 
 from . import id3
 from . import search
@@ -42,7 +41,7 @@ class Downloader:
             return
 
         print("++ Processing %s - %s" % (track.artist, track.name))
-        audio_file_path = self.download_to_tmp(track)
+        audio_file_path = self.download_and_convert(track)
         if audio_file_path is None:
             print(
                 "---- No You Tube video found for '%s - %s'"
@@ -50,39 +49,60 @@ class Downloader:
             )
             return
 
-        self.convert_or_copy(audio_file_path, track)
-
     def should_skip(self, track):
         glob_extension = ".mp3" if self.convert_to_mp3 else ".*"
         pattern = get_audio_file_path(self.directory, track, glob_extension)
         return len(glob(pattern)) != 0
 
-    def convert_or_copy(self, audio_file_path, track):
-        ensure_directory_exists(self.directory)
-        if self.convert_to_mp3:
-            dst_path = get_audio_file_path(self.directory, track, ".mp3")
-            remove_file(dst_path)
-            convert(audio_file_path, dst_path)
-            id3.tag(dst_path, track)
-        else:
-            extension = os.path.splitext(audio_file_path)[1]
-            dst_path = get_audio_file_path(self.directory, track, extension)
-            remove_file(dst_path)
-            shutil.move(audio_file_path, dst_path)
-
-    def download_to_tmp(self, track):
-        video = search.best_match(track, interactive=self.interactive)
-        if video is None:
+    def download_and_convert(self, track):
+        video_url = search.best_match(track, interactive=self.interactive)
+        if video_url is None:
             return None
 
-        # By default, the best audio format is often webm, which is not
-        # supported by older versions of avconv.
-        best = video.getbestaudio(preftype=self.audio_format or "any")
+        # Prepare file path
+        # TODO weirdly enough, the destination path template is not taken into account
+        # when the postprocessors are enabled
+        filename = "{} - {}.%(ext)s".format(track.artist, track.name)
+        path_template = os.path.join(self.directory, filename)
+        downloader_params = {
+            "format": self.audio_format or "bestaudio",
+            "outtmpl": path_template,
+            "logger": YoutubeDlLogger(),
+        }
+        if self.convert_to_mp3:
+            downloader_params["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192",
+                }
+            ]
+        downloader = youtube_dl.YoutubeDL(params=downloader_params)
+        download_info = downloader.extract_info(video_url, download=False)
+        downloaded_file_path = downloader.prepare_filename(download_info)
 
-        tmp_path = get_tmp_path(best)
-        print("    Downloading %s to %s" % (video.watchv_url, tmp_path))
-        best.download(tmp_path, quiet=True)
-        return tmp_path
+        # Actually download and convert the video
+        print("    Downloading %s to %s" % (video_url, downloaded_file_path))
+        downloader.download([video_url])
+
+        converted_file_path = downloaded_file_path
+        if self.convert_to_mp3:
+            converted_file_path = path_template % {"ext": "mp3"}
+            id3.tag(converted_file_path, track)
+
+        return converted_file_path
+
+
+class YoutubeDlLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        sys.stderr.write(msg)
+        sys.stderr.write("\n")
 
 
 def get_audio_file_path(directory, track, extension):
@@ -90,43 +110,9 @@ def get_audio_file_path(directory, track, extension):
     return os.path.join(directory, filter_filename(filename))
 
 
-def convert(src_path, dst_path):
-    """
-    Convert a file to mp3 and remove the original file.
-    """
-    executable = None
-    for candidate in ["ffmpeg", "avconv"]:
-        if shutil.which(candidate):
-            executable = candidate
-            break
-    if executable is None:
-        raise ValueError(
-            "Either ffmpeg or avconv must be installed in order to convert audio files"
-            " to mp3. If you do not wish to convert files to mp3, use the --no-convert"
-            " option"
-        )
-    try:
-        subprocess.call([executable, "-v", "quiet", "-i", src_path, dst_path])
-    except KeyboardInterrupt:
-        os.remove(dst_path)
-        raise
-    os.remove(src_path)
-
-
 def ensure_directory_exists(dirname):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-
-
-def remove_file(path):
-    if os.path.exists(path):
-        os.remove(path)
-
-
-def get_tmp_path(result_stream):
-    filename = result_stream.title + "." + result_stream.extension
-    filename = filter_filename(filename)
-    return os.path.join(tempfile.gettempdir(), filename)
 
 
 def filter_filename(filename):

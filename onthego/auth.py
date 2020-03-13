@@ -132,7 +132,7 @@ def save_credentials(
     username, client_id, client_secret, redirect_uri, google_developer_key
 ):
     credentials_path = get_credentials_path()
-    print("Saving Spotify credentials to", credentials_path)
+    print("Saving Spotify and Youtube credentials to", credentials_path)
     check_directory_exists(credentials_path)
     with open(credentials_path, "w") as credentials_file:
         json.dump(
