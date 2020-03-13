@@ -14,9 +14,18 @@ def get_long_description():
 
 
 def get_requirements():
-    return [
-        line.strip() for line in open(os.path.join(here, "requirements", "base.in"))
+    requirements = [
+        line.strip()
+        for line in open(os.path.join(here, "requirements", "base.in"))
+        if line != "youtube-dl"
     ]
+    # Get the latest youtube-dl requirement
+    requirements += [
+        line.strip()
+        for line in open(os.path.join(here, "requirements", "base.txt"))
+        if line.startswith("youtube-dl")
+    ]
+    return requirements
 
 
 setup(

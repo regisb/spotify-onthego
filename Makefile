@@ -6,6 +6,10 @@ compile-requirements: ## Compile *.txt requirements files
 	pip-compile requirements/base.in
 	pip-compile requirements/dev.in
 
+upgrade-requirements:
+	pip-compile --upgrade requirements/base.in
+	pip-compile --upgrade requirements/dev.in
+
 format:
 	black ./onthego
 

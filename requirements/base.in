@@ -3,6 +3,5 @@ eyeD3
 oauth2client
 google-api-python-client
 spotipy
-pafy
 pathlib
 youtube-dl
