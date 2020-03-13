@@ -6,13 +6,18 @@ compile-requirements: ## Compile *.txt requirements files
 	pip-compile requirements/base.in
 	pip-compile requirements/dev.in
 
-upgrade-requirements:
+upgrade-requirements: ## Upgrade all requirements
 	pip-compile --upgrade requirements/base.in
 	pip-compile --upgrade requirements/dev.in
 
-format:
+format: ## Format source code
 	black ./onthego
 
+build: ## Build python source package
+	python setup.py sdist
+
+pypi: build ## Send source package to pypi
+	twine upload --skip-existing ./dist/spotify-onthego-*.tar.gz
 
 ###### Testing
 
