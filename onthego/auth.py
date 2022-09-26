@@ -67,14 +67,14 @@ def load_token():
     token_path = get_token_path()
     if not os.path.exists(token_path):
         return None
-    with open(token_path) as token_file:
+    with open(token_path, encoding="utf8") as token_file:
         return token_file.read().strip()
 
 
 def save_token(token):
     token_path = get_token_path()
     check_directory_exists(token_path)
-    with open(token_path, "w") as token_file:
+    with open(token_path, "w", encoding="utf8") as token_file:
         token_file.write(token)
 
 
@@ -93,7 +93,7 @@ def load_credentials():
         raise CredentialsNotFound("Credentials file not found or not readable")
     credentials = {}
     try:
-        with open(credentials_path) as credentials_file:
+        with open(credentials_path, encoding="utf8") as credentials_file:
             credentials = json.load(credentials_file)
         return (
             credentials["USERNAME"],
@@ -102,8 +102,10 @@ def load_credentials():
             credentials["REDIRECT_URI"],
             credentials["GOOGLE_DEVELOPER_KEY"],
         )
-    except (ValueError, KeyError):
-        raise CredentialsNotFound("Could not parse credentials file", **credentials)
+    except (ValueError, KeyError) as e:
+        raise CredentialsNotFound(
+            "Could not parse credentials file", **credentials
+        ) from e
 
 
 def ask_for_credentials(**credentials_found):
@@ -134,7 +136,7 @@ def save_credentials(
     credentials_path = get_credentials_path()
     print("Saving Spotify and Youtube credentials to", credentials_path)
     check_directory_exists(credentials_path)
-    with open(credentials_path, "w") as credentials_file:
+    with open(credentials_path, "w", encoding="utf8") as credentials_file:
         json.dump(
             {
                 "USERNAME": username,
@@ -175,5 +177,5 @@ def get_config_file_path(filename):
 
 class CredentialsNotFound(Exception):
     def __init__(self, message, **credentials_found):
-        super(CredentialsNotFound, self).__init__(message)
+        super().__init__(message)
         self.credentials_found = credentials_found

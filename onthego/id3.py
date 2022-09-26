@@ -16,7 +16,7 @@ def tag(filepath, track):
 
     # Get album art image
     if track.album_art_url:
-        image_data = requests.get(track.album_art_url).content
+        image_data = requests.get(track.album_art_url, timeout=60).content
         audiofile.tag.images.set(3, image_data, "image/jpeg")  # 3 means 'front cover'
 
     audiofile.tag.save()

@@ -8,7 +8,7 @@ def best_match(track, interactive=False):
 
 
 def get_video_url(video_id):
-    return "https://www.youtube.com/watch?v={}".format(video_id)
+    return f"https://www.youtube.com/watch?v={video_id}"
 
 
 def get_video(track):
@@ -18,6 +18,7 @@ def get_video(track):
             return get_video_url(video_id)
         except BlockedVideoError:
             continue
+    return None
 
 
 def get_video_interactively(track):
@@ -39,14 +40,14 @@ def get_video_interactively(track):
 
 def pick_result(results, new_results, has_next=True):
     for pos, result in enumerate(new_results):
-        print("[{}] {} {}".format(pos + len(results) + 1, result[1], result[0]))
+        print(f"[{pos + len(results) + 1}] {result[1]} {result[0]}")
 
     while new_results:
         results.append(new_results.pop(0))
 
     while True:
-        message = "Select song to download (default=1{}): ".format(
-            ", next=n" if has_next else ""
+        message = (
+            f"Select song to download (default=1{', next=n' if has_next else ''}): "
         )
         choice = input(message)
         choice = choice.strip().lower()
@@ -66,7 +67,7 @@ def pick_result(results, new_results, has_next=True):
                         "origin. Please choose a different source."
                     )
 
-        print("Invalid choice: {}".format(choice))
+        print(f"Invalid choice: {choice}")
 
 
 def iter_search_results(track):

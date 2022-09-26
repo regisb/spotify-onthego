@@ -37,16 +37,13 @@ class Downloader:
 
     def audio(self, track):
         if self.skip_existing and self.should_skip(track):
-            print("++ Skipping %s - %s" % (track.artist, track.name))
+            print(f"++ Skipping {track.artist} - {track.name}")
             return
 
-        print("++ Processing %s - %s" % (track.artist, track.name))
+        print(f"++ Processing {track.artist} - {track.name}")
         audio_file_path = self.download_and_convert(track)
         if audio_file_path is None:
-            print(
-                "---- No You Tube video found for '%s - %s'"
-                % (track.artist, track.name)
-            )
+            print(f"---- No You Tube video found for '{track.artist} - {track.name}'")
             return
 
     def should_skip(self, track):
@@ -62,7 +59,7 @@ class Downloader:
         # Prepare file path
         # TODO weirdly enough, the destination path template is not taken into account
         # when the postprocessors are enabled
-        filename = "{} - {}.%(ext)s".format(track.artist, track.name)
+        filename = f"{track.artist} - {track.name}.%(ext)s"
         path_template = os.path.join(self.directory, filename)
         downloader_params = {
             "format": self.audio_format or "bestaudio",
@@ -82,7 +79,7 @@ class Downloader:
         downloaded_file_path = downloader.prepare_filename(download_info)
 
         # Actually download and convert the video
-        print("    Downloading %s to %s" % (video_url, downloaded_file_path))
+        print(f"    Downloading {video_url} to {downloaded_file_path}")
         downloader.download([video_url])
 
         converted_file_path = downloaded_file_path
@@ -93,7 +90,7 @@ class Downloader:
         return converted_file_path
 
 
-class YoutubeDlLogger(object):
+class YoutubeDlLogger:
     def debug(self, msg):
         pass
 
@@ -106,7 +103,7 @@ class YoutubeDlLogger(object):
 
 
 def get_audio_file_path(directory, track, extension):
-    filename = "%s - %s%s" % (track.artist, track.name, extension)
+    filename = f"{track.artist} - {track.name}{extension}"
     return os.path.join(directory, filter_filename(filename))
 
 

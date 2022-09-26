@@ -3,7 +3,6 @@ disable=missing-docstring,
         invalid-name,
         line-too-long,
         fixme,
-        bad-continuation,
         duplicate-code,
 
 [DESIGN]

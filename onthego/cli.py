@@ -35,8 +35,7 @@ def download_playlist():
         if dst is not None:
             playlist_found = True
             print(
-                "Downloading playlist '%s' (id=%s) from owner '%s'"
-                % (playlist_name, playlist_id, playlist_owner_id)
+                f"Downloading playlist '{playlist_name}' (id={playlist_id}) from owner '{playlist_owner_id}'"
             )
             youtube_downloader = onthego.youtube.Downloader(
                 dst,
@@ -51,8 +50,7 @@ def download_playlist():
                 youtube_downloader.audio(track)
     if not playlist_found:
         print(
-            "Playlist '%s' was not found. Did you type its name correctly?"
-            % args.playlist
+            f"Playlist '{args.playlist}' was not found. Did you type its name correctly?"
         )
         sys.exit(1)
 
