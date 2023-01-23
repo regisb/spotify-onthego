@@ -5,7 +5,7 @@
 #    pip-compile requirements/base.in
 #
 appdirs==1.4.4
-    # via -r requirements/base.in
+    # via -r base.in
 async-timeout==4.0.2
     # via redis
 cachetools==5.2.0
@@ -21,13 +21,13 @@ deprecated==1.2.13
 deprecation==2.1.0
     # via eyed3
 eyed3==0.9.6
-    # via -r requirements/base.in
+    # via -r base.in
 filetype==1.1.0
     # via eyed3
 google-api-core==2.10.1
     # via google-api-python-client
 google-api-python-client==2.62.0
-    # via -r requirements/base.in
+    # via -r base.in
 google-auth==2.11.1
     # via
     #   google-api-core
@@ -45,13 +45,13 @@ httplib2==0.20.4
 idna==3.4
     # via requests
 oauth2client==4.1.3
-    # via -r requirements/base.in
+    # via -r base.in
 packaging==21.3
     # via
     #   deprecation
     #   redis
 pathlib==1.0.1
-    # via -r requirements/base.in
+    # via -r base.in
 protobuf==4.21.6
     # via
     #   google-api-core
@@ -85,8 +85,8 @@ six==1.16.0
     #   google-auth-httplib2
     #   oauth2client
     #   spotipy
-spotipy==2.20.0
-    # via -r requirements/base.in
+spotipy==2.22.1
+    # via -r base.in
 toml==0.10.2
     # via coverage
 uritemplate==4.1.1
@@ -98,4 +98,4 @@ urllib3==1.26.12
 wrapt==1.14.1
     # via deprecated
 youtube-dl==2021.12.17
-    # via -r requirements/base.in
+    # via -r base.in
